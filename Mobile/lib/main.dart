@@ -16,38 +16,61 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/start': (context) => StartPage(),
+        '/me': (context) => MePage(),
         '/report': (context) => ReportPage(),
       },
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    StartPage(),
+    MePage(),
+    ReportPage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        // title: Text('Home Page'),
+        automaticallyImplyLeading: false, // Remove the back arrow
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/start');
-              },
-              child: Text('Start'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/report');
-              },
-              child: Text('Report'),
-            ),
-          ],
-        ),
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Me',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.report),
+            label: 'Report',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -67,6 +90,20 @@ class StartPage extends StatelessWidget {
   }
 }
 
+class MePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Me Page'),
+      ),
+      body: Center(
+        child: Text('This is the Me Page'),
+      ),
+    );
+  }
+}
+
 class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -80,4 +117,3 @@ class ReportPage extends StatelessWidget {
     );
   }
 }
-
