@@ -85,7 +85,19 @@ class StartPage extends StatelessWidget {
         title: Text('Smart Dubdbell'),
       ),
       body: Center(
-        child: Text('This is the Start Page'),
+        child: ElevatedButton(
+            onPressed: () {
+               Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WorkingPage()),
+              );// Addclick functionality here
+            },
+            child: Text('START', style: TextStyle(fontSize: 50)),
+            style: ElevatedButton.styleFrom(
+              shape: CircleBorder(), // Make the button circular
+              padding: EdgeInsets.all(120), // Adjust the size of the button
+            ),
+        ),
       ),
     );
   }
@@ -203,3 +215,18 @@ class ReportPage extends StatelessWidget {
     );
   }
 }
+
+class WorkingPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Working Page'),
+      ),
+      body: Center(
+        child: Text('This is the Working Page'),
+      ),
+    );
+  }
+}
+
