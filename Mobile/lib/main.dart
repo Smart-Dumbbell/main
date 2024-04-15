@@ -257,6 +257,12 @@ class _WorkingPageState extends State<WorkingPage> {
       setState(() {});
     });
   }
+
+  @override
+  void dispose() {
+    t.cancel(); // Cancel the timer in dispose()
+    super.dispose();
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -311,7 +317,7 @@ class _WorkingPageState extends State<WorkingPage> {
                     MaterialPageRoute(builder: (context) => ReportPage()),
                   );
                 },
-                child: Text("Stop Exercise and View Report"),
+                child: Text("End Workout Section"),
               ),
             ],
           ),
@@ -330,9 +336,27 @@ class ReportPage extends StatelessWidget {
         title: Text('Report Page'),
       ),
       body: Center(
-        child: Text('This is the Report Page'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('This is the Report Page'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false,
+                );
+              },
+              child: Text('Return to Home Page'),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+
 
