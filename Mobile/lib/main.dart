@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
+ 
+import 'package:flutter/cupertino.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -17,7 +21,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/start': (context) => StartPage(),
         '/me': (context) => MePage(),
-        '/report': (context) => ReportPage(),
+        '/progress': (context) => ProgressPage(),
       },
     );
   }
@@ -34,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     StartPage(),
     MePage(),
-    ReportPage(),
+    ProgressPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -66,7 +70,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.report),
-            label: 'Report',
+            label: 'Progress',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -90,13 +94,13 @@ class StartPage extends StatelessWidget {
                Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => WorkingPage()),
-              );// Addclick functionality here
+              );
             },
-            child: Text('START', style: TextStyle(fontSize: 50)),
             style: ElevatedButton.styleFrom(
-              shape: CircleBorder(), // Make the button circular
+              shape: CircleBorder(),
               padding: EdgeInsets.all(120), // Adjust the size of the button
             ),
+            child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
         ),
       ),
     );
@@ -202,6 +206,122 @@ class _ProfilePageState extends State<MePage> {
   }
 }
 
+class ProgressPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Progress Page'),
+      ),
+      body: Center(
+        child: Text('This is the Progress Page'),
+      ),
+    );
+  }
+}
+
+class WorkingPage extends StatefulWidget {
+  @override
+  _WorkingPageState createState() => _WorkingPageState();
+}
+
+class _WorkingPageState extends State<WorkingPage> {
+  late Stopwatch stopwatch;
+  late Timer t;
+ 
+  void handleStartStop() {
+    if(stopwatch.isRunning) {
+      stopwatch.stop();
+    }
+    else {
+      stopwatch.start();
+    }
+  }
+ 
+  String returnFormattedText() {
+    var milli = stopwatch.elapsed.inMilliseconds;
+ 
+    String milliseconds = (milli % 1000).toString().padLeft(3, "0"); // this one for the miliseconds
+    String seconds = ((milli ~/ 1000) % 60).toString().padLeft(2, "0"); // this is for the second
+    String minutes = ((milli ~/ 1000) ~/ 60).toString().padLeft(2, "0"); // this is for the minute
+ 
+    return "$minutes:$seconds:$milliseconds";
+  }
+ 
+  @override
+  void initState() {
+    super.initState();
+    stopwatch = Stopwatch();
+ 
+    t = Timer.periodic(Duration(milliseconds: 30), (timer) {
+      setState(() {});
+    });
+  }
+ 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Column( // this is the column
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+ 
+              CupertinoButton(
+                onPressed: () {
+                  handleStartStop();
+                },
+                padding: EdgeInsets.all(0),
+                child: Container(
+                  height: 250,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,  // this one is use for make the circle on ui.
+                    border: Border.all(
+                      color: Color(0xff0395eb),
+                      width: 4,
+                    ),
+                  ),
+                  child: Text(returnFormattedText(), style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),),
+                ),
+              ),
+ 
+              SizedBox(height: 15,),
+ 
+              CupertinoButton(     // this the cupertino button and here we perform all the reset button function
+                onPressed: () {
+                  stopwatch.reset();
+                },
+                padding: EdgeInsets.all(0),
+                child: Text("Reset", style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),),
+              ),
+              
+              SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ReportPage()),
+                  );
+                },
+                child: Text("Stop Exercise and View Report"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ); 
+  }
+}
+
+
 class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -211,20 +331,6 @@ class ReportPage extends StatelessWidget {
       ),
       body: Center(
         child: Text('This is the Report Page'),
-      ),
-    );
-  }
-}
-
-class WorkingPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Working Page'),
-      ),
-      body: Center(
-        child: Text('This is the Working Page'),
       ),
     );
   }
