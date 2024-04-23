@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
+import 'package:smart_dumbbell_mobile/bar%20graphs/bar_graph.dart';
 
 void main() {
   runApp(MyApp());
@@ -327,8 +328,9 @@ class _WorkingPageState extends State<WorkingPage> {
   }
 }
 
-
 class ReportPage extends StatelessWidget {
+  List<double> repcount = [10, 25, 35]; // dummy data
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -339,7 +341,14 @@ class ReportPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('This is the Report Page'),
+            Text('Rep Counter'),
+            SizedBox(height: 20),
+            SizedBox(
+              height: 200,
+              child: MyBarGraph(
+                repcount: repcount,
+              ),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -357,6 +366,3 @@ class ReportPage extends StatelessWidget {
     );
   }
 }
-
-
-
