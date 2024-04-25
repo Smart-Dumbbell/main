@@ -3,7 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
-import 'package:smart_dumbbell_mobile/bar%20graphs/bar_graph.dart';
+import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -87,7 +88,7 @@ class StartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Smart Dubdbell'),
+        title: Text('Smart Dumbbell'),
       ),
       body: Center(
         child: ElevatedButton(
@@ -328,6 +329,44 @@ class _WorkingPageState extends State<WorkingPage> {
   }
 }
 
+// class ReportPage extends StatelessWidget {
+//   List<double> repcount = [10, 25, 35]; // dummy data
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Report Page'),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Text('Rep Counter'),
+//             SizedBox(height: 20),
+//             SizedBox(
+//               height: 200,
+//               child: MyBarGraph(
+//                 repcount: repcount,
+//               ),
+//             ),
+//             SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: () {
+//                 Navigator.pushAndRemoveUntil(
+//                   context,
+//                   MaterialPageRoute(builder: (context) => HomePage()),
+//                   (route) => false,
+//                 );
+//               },
+//               child: Text('Return to Home Page'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 class ReportPage extends StatelessWidget {
   List<double> repcount = [10, 25, 35]; // dummy data
 
@@ -348,6 +387,24 @@ class ReportPage extends StatelessWidget {
               child: MyBarGraph(
                 repcount: repcount,
               ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Calories burned: '),
+                // Replace '0' with the actual calculated calories burned
+                Text('1'),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Time: '),
+                // Replace '0:00' with the actual recorded time
+                Text('0:00'),
+              ],
             ),
             SizedBox(height: 20),
             ElevatedButton(
