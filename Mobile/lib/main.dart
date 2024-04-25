@@ -329,44 +329,6 @@ class _WorkingPageState extends State<WorkingPage> {
   }
 }
 
-// class ReportPage extends StatelessWidget {
-//   List<double> repcount = [10, 25, 35]; // dummy data
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Report Page'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Text('Rep Counter'),
-//             SizedBox(height: 20),
-//             SizedBox(
-//               height: 200,
-//               child: MyBarGraph(
-//                 repcount: repcount,
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.pushAndRemoveUntil(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => HomePage()),
-//                   (route) => false,
-//                 );
-//               },
-//               child: Text('Return to Home Page'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 class ReportPage extends StatelessWidget {
   List<double> repcount = [10, 25, 35]; // dummy data
 
@@ -394,6 +356,10 @@ class ReportPage extends StatelessWidget {
               children: [
                 Text('Calories burned: '),
                 // Replace '0' with the actual calculated calories burned
+                //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
+                //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
+                //MET for 10lb = 2 20 = 2.2 30 = 2.4 
+                //cal burned = (BMR * MET * duration(in hours)) / 10
                 Text('1'),
               ],
             ),
@@ -402,7 +368,7 @@ class ReportPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Time: '),
-                // Replace '0:00' with the actual recorded time
+                // dummy time
                 Text('0:00'),
               ],
             ),

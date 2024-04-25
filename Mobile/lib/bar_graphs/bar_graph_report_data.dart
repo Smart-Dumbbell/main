@@ -1,5 +1,3 @@
-
-
 import 'package:smart_dumbbell_mobile/bar_graphs/individualbar.dart';
 
 class BarGraphData{
