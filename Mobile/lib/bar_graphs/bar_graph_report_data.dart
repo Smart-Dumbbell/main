@@ -1,4 +1,4 @@
-import 'package:smart_dumbbell_mobile/bar%20graphs/individualbar.dart';
+import 'package:smart_dumbbell_mobile/bar_graphs/individualbar.dart';
 
 class BarGraphData{
   double goodrep;
