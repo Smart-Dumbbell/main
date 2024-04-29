@@ -91,23 +91,9 @@ class StartPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Smart Dubdbell'),
       ),
-      /*body: Center(
-        child: ElevatedButton(
-            onPressed: () {
-               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WorkingPage()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(120), // Adjust the size of the button
-            ),
-            child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
-        ),
-      ),*/
       body: Stack(
         children: <Widget>[
+          //start button
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
@@ -125,6 +111,7 @@ class StartPage extends StatelessWidget {
             child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
             ),
           ),
+          //bluetooth button
           Positioned(
             top: 20,
             right: 20,
