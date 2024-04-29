@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
+import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
+
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
@@ -89,7 +91,7 @@ class StartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Smart Dubdbell'),
+        title: Text('Smart Dumbbell'),
       ),
       body: Stack(
         children: <Widget>[
@@ -404,8 +406,9 @@ class _WorkingPageState extends State<WorkingPage> {
   }
 }
 
-
 class ReportPage extends StatelessWidget {
+  List<double> repcount = [10, 25, 35]; // dummy data
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -416,7 +419,36 @@ class ReportPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('This is the Report Page'),
+            Text('Rep Counter'),
+            SizedBox(height: 20),
+            SizedBox(
+              height: 200,
+              child: MyBarGraph(
+                repcount: repcount,
+              ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Calories burned: '),
+                // Replace '0' with the actual calculated calories burned
+                //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
+                //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
+                //MET for 10lb = 2 20 = 2.2 30 = 2.4 
+                //cal burned = (BMR * MET * duration(in hours)) / 10
+                Text('1'),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Time: '),
+                // dummy time
+                Text('0:00'),
+              ],
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -434,6 +466,3 @@ class ReportPage extends StatelessWidget {
     );
   }
 }
-
-
-
