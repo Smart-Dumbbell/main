@@ -7,6 +7,13 @@ import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
+<<<<<<< HEAD
+=======
+
+
+
+ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
 
 void main() {
   runApp(MyApp());
@@ -90,26 +97,100 @@ class StartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Smart Dubdbell'),
+        title: Text('Smart Dumbbell'),
       ),
-      body: Center(
-        child: ElevatedButton(
-            onPressed: () {
-               Navigator.push(
+      body: Stack(
+        children: <Widget>[
+          //start button
+          Align(
+            alignment: Alignment.center,
+            child: ElevatedButton(
+              onPressed: () {
+                // Your code here
+                Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => WorkingPage()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
+                );
+              },
+              style: ElevatedButton.styleFrom(
               shape: CircleBorder(),
               padding: EdgeInsets.all(120), // Adjust the size of the button
             ),
             child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
+            ),
+          ),
+          //bluetooth button
+          Positioned(
+            top: 20,
+            right: 20,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: isBluetoothConnected,
+              builder: (context, value, child) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.bluetooth,
+                    color: value ? Colors.blue : Colors.red,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BluetoothPage()),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+//bluetooth page
+class BluetoothPage extends StatefulWidget {
+  @override
+  _BluetoothPageState createState() => _BluetoothPageState();
+}
+
+class _BluetoothPageState extends State<BluetoothPage> {
+  //bool isBluetoothConnected = false; // Step 4: Bluetooth connection state
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bluetooth Page'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                isBluetoothConnected.value = true; // Update the ValueNotifier
+                Navigator.pop(context); // Go back to the home page
+              },
+              child: Text('Connect'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                isBluetoothConnected.value = false; // Update the ValueNotifier
+                Navigator.pop(context); // Go back to the home page
+              },
+              child: Text('Disconnect'),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
+
+
 
 class MePage extends StatefulWidget {
   @override
@@ -353,6 +434,7 @@ class ReportPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+<<<<<<< HEAD
             // Use FutureBuilder to asynchronously call calculateCaloriesBurned and display the result
             FutureBuilder<double>(
               future: _calculateCaloriesBurned(context),
@@ -368,14 +450,32 @@ class ReportPage extends StatelessWidget {
                   return Text('Calories burned: ${snapshot.data}');
                 }
               },
+=======
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Calories burned: '),
+                // Replace '0' with the actual calculated calories burned
+                //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
+                //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
+                //MET for 10lb = 2 20 = 2.2 30 = 2.4 
+                //cal burned = (BMR * MET * duration(in hours)) / 10
+                Text('1'),
+              ],
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Time: '),
+<<<<<<< HEAD
                 // Dummy data
                 Text('0:05'),
+=======
+                // dummy time
+                Text('0:00'),
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
               ],
             ),
             SizedBox(height: 20),
@@ -394,6 +494,7 @@ class ReportPage extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 
   // Function to asynchronously calculate calories burned using profile data
   Future<double> _calculateCaloriesBurned(BuildContext context) async {
@@ -429,3 +530,6 @@ class ReportPage extends StatelessWidget {
     return caloriesBurned;
   }
 }
+=======
+}
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
