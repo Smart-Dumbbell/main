@@ -1,13 +1,19 @@
+//import 'dart:html';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
+<<<<<<< HEAD
+=======
 
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
 
 void main() {
   runApp(MyApp());
@@ -428,6 +434,23 @@ class ReportPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+<<<<<<< HEAD
+            // Use FutureBuilder to asynchronously call calculateCaloriesBurned and display the result
+            FutureBuilder<double>(
+              future: _calculateCaloriesBurned(context),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Display a loading indicator while the calculation is in progress
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  // Display an error message if the calculation fails
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  // Display the calculated calories burned
+                  return Text('Calories burned: ${snapshot.data}');
+                }
+              },
+=======
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -439,14 +462,20 @@ class ReportPage extends StatelessWidget {
                 //cal burned = (BMR * MET * duration(in hours)) / 10
                 Text('1'),
               ],
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Time: '),
+<<<<<<< HEAD
+                // Dummy data
+                Text('0:05'),
+=======
                 // dummy time
                 Text('0:00'),
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
               ],
             ),
             SizedBox(height: 20),
@@ -465,4 +494,42 @@ class ReportPage extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
+
+  // Function to asynchronously calculate calories burned using profile data
+  Future<double> _calculateCaloriesBurned(BuildContext context) async {
+    // Retrieve profile data from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String name = prefs.getString('name') ?? '';
+    int age = prefs.getInt('age') ?? 0;
+    double height = prefs.getDouble('height') ?? 0.0;
+    double weight = prefs.getDouble('weight') ?? 0.0;
+    String gender = prefs.getString('gender') ?? '';
+
+    // Use the retrieved data to calculate calories burned
+    double caloriesBurned = _calculateCalories(age, height, weight, gender);
+    return caloriesBurned;
+  }
+
+  double _calculateCalories(int age, double height, double weight, String gender) {
+    //bmr x met x time in hours
+    double bmr;
+    if (gender == 'male') {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+    } else {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+    }
+    //////random met until time functionality is working
+    List<double> METLIST = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5];
+    Random random = Random();
+    int randomIndex = random.nextInt(METLIST.length);
+    double randomMET = METLIST[randomIndex];
+
+    double dummytime = 2 / 60;  //dummy time
+    double caloriesBurned = bmr * randomMET * dummytime;
+    return caloriesBurned;
+  }
 }
+=======
+}
+>>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
