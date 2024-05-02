@@ -1,4 +1,5 @@
 //import 'dart:html';
+//import 'dart:html';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,14 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
+import 'package:all_bluetooth/all_bluetooth.dart'; 
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
-<<<<<<< HEAD
-=======
-
-
+//import 'package:smart_dumbbell_mobile/bluetooth_connection.dart'; 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
 
 void main() {
   runApp(MyApp());
@@ -62,9 +61,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
-        //title: Text('Home Page'),
-        automaticallyImplyLeading: false, // Remove the back arrow
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -101,25 +98,22 @@ class StartPage extends StatelessWidget {
       ),
       body: Stack(
         children: <Widget>[
-          //start button
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                // Your code here
                 Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WorkingPage()),
+                  context,
+                  MaterialPageRoute(builder: (context) => WorkingPage()),
                 );
               },
               style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(120), // Adjust the size of the button
-            ),
-            child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(120),
+              ),
+              child: Text('START', style: TextStyle(fontSize: 50)),
             ),
           ),
-          //bluetooth button
           Positioned(
             top: 20,
             right: 20,
@@ -135,7 +129,7 @@ class StartPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BluetoothPage()),
+                      MaterialPageRoute(builder: (context) => BluetoothConnectionScreen()),
                     );
                   },
                 );
@@ -147,50 +141,6 @@ class StartPage extends StatelessWidget {
     );
   }
 }
-
-
-//bluetooth page
-class BluetoothPage extends StatefulWidget {
-  @override
-  _BluetoothPageState createState() => _BluetoothPageState();
-}
-
-class _BluetoothPageState extends State<BluetoothPage> {
-  //bool isBluetoothConnected = false; // Step 4: Bluetooth connection state
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bluetooth Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                isBluetoothConnected.value = true; // Update the ValueNotifier
-                Navigator.pop(context); // Go back to the home page
-              },
-              child: Text('Connect'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                isBluetoothConnected.value = false; // Update the ValueNotifier
-                Navigator.pop(context); // Go back to the home page
-              },
-              child: Text('Disconnect'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-
 
 class MePage extends StatefulWidget {
   @override
@@ -434,7 +384,6 @@ class ReportPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-<<<<<<< HEAD
             // Use FutureBuilder to asynchronously call calculateCaloriesBurned and display the result
             FutureBuilder<double>(
               future: _calculateCaloriesBurned(context),
@@ -450,32 +399,14 @@ class ReportPage extends StatelessWidget {
                   return Text('Calories burned: ${snapshot.data}');
                 }
               },
-=======
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Calories burned: '),
-                // Replace '0' with the actual calculated calories burned
-                //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
-                //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
-                //MET for 10lb = 2 20 = 2.2 30 = 2.4 
-                //cal burned = (BMR * MET * duration(in hours)) / 10
-                Text('1'),
-              ],
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Time: '),
-<<<<<<< HEAD
                 // Dummy data
                 Text('0:05'),
-=======
-                // dummy time
-                Text('0:00'),
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
               ],
             ),
             SizedBox(height: 20),
@@ -494,7 +425,6 @@ class ReportPage extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
 
   // Function to asynchronously calculate calories burned using profile data
   Future<double> _calculateCaloriesBurned(BuildContext context) async {
@@ -530,6 +460,122 @@ class ReportPage extends StatelessWidget {
     return caloriesBurned;
   }
 }
-=======
+
+
+
+class BluetoothConnectionScreen extends StatefulWidget {
+  const BluetoothConnectionScreen({Key? key}) : super(key: key);
+
+  @override
+  _BluetoothConnectionScreenState createState() => _BluetoothConnectionScreenState();
 }
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
+
+class _BluetoothConnectionScreenState extends State<BluetoothConnectionScreen> {
+  final allBluetooth = AllBluetooth();
+  final bondedDevices = ValueNotifier<List<BluetoothDevice>>([]);
+
+  @override
+  void initState() {
+    super.initState();
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    await Future.wait([
+      Permission.bluetooth.request(),
+      Permission.bluetoothConnect.request(),
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: allBluetooth.streamBluetoothState,
+      builder: (context, snapshot) {
+        final bluetoothOn = snapshot.data ?? false;
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Bluetooth Connect"),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (bluetoothOn) {
+                _loadBondedDevices();
+              } else {
+                _showTurnBluetoothOnDialog();
+              }
+            },
+            backgroundColor: bluetoothOn ? Theme.of(context).primaryColor : Colors.grey,
+            child: const Icon(Icons.wifi_tethering),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      bluetoothOn ? "on" : "off",
+                      style: TextStyle(
+                        color: bluetoothOn ? Colors.green : Colors.red,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: bluetoothOn ? _loadBondedDevices : null,
+                      child: const Text("Bonded Devices"),
+                    ),
+                  ],
+                ),
+                if (!bluetoothOn)
+                  const Center(
+                    child: Text("Turn Bluetooth on"),
+                  ),
+                ValueListenableBuilder<List<BluetoothDevice>>(
+                  valueListenable: bondedDevices,
+                  builder: (context, devices, child) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: devices.length,
+                        itemBuilder: (context, index) {
+                          final device = devices[index];
+                          return ListTile(
+                            title: Text(device.name),
+                            subtitle: Text(device.address),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _loadBondedDevices() async {
+    final devices = await allBluetooth.getBondedDevices();
+    bondedDevices.value = devices;
+  }
+
+  Future<void> _showTurnBluetoothOnDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Bluetooth is Off"),
+          content: const Text("Please turn on Bluetooth to continue."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
