@@ -1,6 +1,8 @@
 //import 'dart:html';
 //import 'dart:html';
 import 'dart:math';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -462,22 +464,35 @@ class ReportPage extends StatelessWidget {
 }
 
 
-
 class BluetoothConnectionScreen extends StatefulWidget {
-  const BluetoothConnectionScreen({Key? key}) : super(key: key);
-
   @override
-  _BluetoothConnectionScreenState createState() => _BluetoothConnectionScreenState();
+  _BluetoothConnectionScreenState createState() =>
+      _BluetoothConnectionScreenState();
 }
 
-class _BluetoothConnectionScreenState extends State<BluetoothConnectionScreen> {
-  final allBluetooth = AllBluetooth();
+class _BluetoothConnectionScreenState
+    extends State<BluetoothConnectionScreen> {
+  final AllBluetooth allBluetooth = AllBluetooth();
   final bondedDevices = ValueNotifier<List<BluetoothDevice>>([]);
+  BluetoothDevice? connectedDevice;
+  late StreamSubscription<String?> _dataSubscription;
 
   @override
   void initState() {
     super.initState();
     _requestPermissions();
+    _dataSubscription = allBluetooth.listenForData.listen((data) {
+      if (data != null) {
+        // Handle received data
+        print('Received data: $data');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _dataSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _requestPermissions() async {
@@ -487,95 +502,82 @@ class _BluetoothConnectionScreenState extends State<BluetoothConnectionScreen> {
     ]);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: allBluetooth.streamBluetoothState,
-      builder: (context, snapshot) {
-        final bluetoothOn = snapshot.data ?? false;
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Bluetooth Connect"),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              if (bluetoothOn) {
-                _loadBondedDevices();
-              } else {
-                _showTurnBluetoothOnDialog();
-              }
-            },
-            backgroundColor: bluetoothOn ? Theme.of(context).primaryColor : Colors.grey,
-            child: const Icon(Icons.wifi_tethering),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      bluetoothOn ? "on" : "off",
-                      style: TextStyle(
-                        color: bluetoothOn ? Colors.green : Colors.red,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: bluetoothOn ? _loadBondedDevices : null,
-                      child: const Text("Bonded Devices"),
-                    ),
-                  ],
-                ),
-                if (!bluetoothOn)
-                  const Center(
-                    child: Text("Turn Bluetooth on"),
-                  ),
-                ValueListenableBuilder<List<BluetoothDevice>>(
-                  valueListenable: bondedDevices,
-                  builder: (context, devices, child) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: devices.length,
-                        itemBuilder: (context, index) {
-                          final device = devices[index];
-                          return ListTile(
-                            title: Text(device.name),
-                            subtitle: Text(device.address),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> _loadBondedDevices() async {
     final devices = await allBluetooth.getBondedDevices();
     bondedDevices.value = devices;
   }
 
-  Future<void> _showTurnBluetoothOnDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Bluetooth is Off"),
-          content: const Text("Please turn on Bluetooth to continue."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
+  void _connectToDevice(String address) async {
+    try {
+      final device =
+          bondedDevices.value.firstWhere((d) => d.address == address);
+      // Connect to the device if needed
+      setState(() {
+        connectedDevice = device;
+      });
+      _sendMessageToDevice("Hello, World!"); // Send "Hello, World!" after connection
+    } catch (exception) {
+      print('Cannot connect, exception occurred: $exception');
+    }
+  }
+
+  Future<void> _sendMessageToDevice(String message) async {
+    try {
+      await allBluetooth.sendMessage(message);
+      print('Message sent: $message');
+    } catch (exception) {
+      print('Failed to send message: $exception');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Bluetooth Connect')),
+      body: Center(
+        child: ValueListenableBuilder<List<BluetoothDevice>>(
+          valueListenable: bondedDevices,
+          builder: (context, devices, _) {
+            return ListView.builder(
+              itemCount: devices.length,
+              itemBuilder: (context, index) {
+                final device = devices[index];
+                return ListTile(
+                  title: Text(device.name),
+                  subtitle: Text(device.address),
+                  onTap: () {
+                    _connectToDevice(device.address);
+                  },
+                );
+              },
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final bluetoothOn = await allBluetooth.isBluetoothOn();
+          if (bluetoothOn) {
+            _loadBondedDevices();
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Turn On Bluetooth'),
+                content: Text('Please enable Bluetooth in your settings.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(Icons.bluetooth),
+      ),
     );
   }
 }
