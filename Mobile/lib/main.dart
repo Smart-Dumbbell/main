@@ -7,16 +7,18 @@ import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
-<<<<<<< HEAD
-=======
-
-
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
+
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => RepetitionsProvider(),
+      child: MyApp(),
+    ),
+  );
+  //runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -33,6 +35,9 @@ class MyApp extends StatelessWidget {
         '/start': (context) => StartPage(),
         '/me': (context) => MePage(),
         '/progress': (context) => ProgressPage(),
+        //'/goal': (context) => GoalPage(onGoalSelected: (int ) {  },),
+        '/goal': (context) => GoalPage(onGoalSelected: (int selectedIndex) {}),
+
       },
     );
   }
@@ -50,12 +55,17 @@ class _HomePageState extends State<HomePage> {
     StartPage(),
     MePage(),
     ProgressPage(),
+    //GoalPage(),
+    GoalPage(onGoalSelected: (int selectedIndex) {}),
   ];
 
   void _onItemTapped(int index) {
+
+    if (index >= 0 && index < _widgetOptions.length) {
     setState(() {
       _selectedIndex = index;
     });
+  }
   }
 
   @override
@@ -70,6 +80,7 @@ class _HomePageState extends State<HomePage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -83,9 +94,13 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.report),
             label: 'Progress',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: 'Goal',
+          ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ),
     );
@@ -188,8 +203,6 @@ class _BluetoothPageState extends State<BluetoothPage> {
     );
   }
 }
-
-
 
 
 class MePage extends StatefulWidget {
@@ -434,7 +447,7 @@ class ReportPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-<<<<<<< HEAD
+
             // Use FutureBuilder to asynchronously call calculateCaloriesBurned and display the result
             FutureBuilder<double>(
               future: _calculateCaloriesBurned(context),
@@ -450,32 +463,26 @@ class ReportPage extends StatelessWidget {
                   return Text('Calories burned: ${snapshot.data}');
                 }
               },
-=======
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Calories burned: '),
-                // Replace '0' with the actual calculated calories burned
-                //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
-                //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
-                //MET for 10lb = 2 20 = 2.2 30 = 2.4 
-                //cal burned = (BMR * MET * duration(in hours)) / 10
-                Text('1'),
-              ],
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
+              // mainAxisAlignment: MainAxisAlignment.center,
+              // children: [
+              //   Text('Calories burned: '),
+              //   // Replace '0' with the actual calculated calories burned
+              //   //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
+              //   //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
+              //   //MET for 10lb = 2 20 = 2.2 30 = 2.4 
+              //   //cal burned = (BMR * MET * duration(in hours)) / 10
+              //   Text('1'),
+              // ],
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Time: '),
-<<<<<<< HEAD
-                // Dummy data
-                Text('0:05'),
-=======
                 // dummy time
                 Text('0:00'),
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
               ],
             ),
             SizedBox(height: 20),
@@ -489,12 +496,11 @@ class ReportPage extends StatelessWidget {
               },
               child: Text('Return to Home Page'),
             ),
-          ],
+            ],
         ),
       ),
     );
   }
-<<<<<<< HEAD
 
   // Function to asynchronously calculate calories burned using profile data
   Future<double> _calculateCaloriesBurned(BuildContext context) async {
@@ -530,6 +536,139 @@ class ReportPage extends StatelessWidget {
     return caloriesBurned;
   }
 }
-=======
+
+class GoalPage extends StatefulWidget {
+  final Function(int) onGoalSelected;
+
+  const GoalPage({required this.onGoalSelected});
+
+  @override
+  _GoalPageState createState() => _GoalPageState();
 }
->>>>>>> d47eddfcecba4668438ee6cb1f3cbe5714dcbdfa
+
+class _GoalPageState extends State<GoalPage> {
+  late SharedPreferences _prefs;
+  int _selectedBox = -1; // Initially no box is selected
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedBox();
+  }
+
+  // Load the selected box index from SharedPreferences
+  Future<void> _loadSelectedBox() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedBox = _prefs.getInt('selectedBox') ?? -1;
+    });
+  }
+
+  // Save the selected box index to SharedPreferences
+  Future<void> _saveSelectedBox(int index) async {
+    setState(() {
+      _selectedBox = index;
+    });
+    await _prefs.setInt('selectedBox', index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Goal Page'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            PressableBox(
+              text: 'Beginner: 20 repetitions',
+              isSelected: _selectedBox == 0,
+              onTap: () {
+                _saveSelectedBox(0);
+                widget.onGoalSelected(0);
+              },
+            ),
+            SizedBox(height: 20),
+            PressableBox(
+              text: 'Intermediate: 30 repetitions',
+              isSelected: _selectedBox == 1,
+              onTap: () {
+                _saveSelectedBox(1);
+                widget.onGoalSelected(1);
+              },
+            ),
+            SizedBox(height: 20),
+            PressableBox(
+              text: 'Advanced: 40 repetitions',
+              isSelected: _selectedBox == 2,
+              onTap: () {
+                _saveSelectedBox(2);
+                widget.onGoalSelected(2);
+              },
+            ),
+            SizedBox(height: 4),
+            PressableBox(
+              text: 'Reset',
+              isSelected: _selectedBox == 3,
+              onTap: () {
+                _saveSelectedBox(-1);
+                widget.onGoalSelected(-1);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PressableBox extends StatelessWidget {
+  final String text;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const PressableBox({
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue : Colors.white,
+          border: Border.all(
+            color: Colors.blue,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 18,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class RepetitionsProvider extends ChangeNotifier {
+  int _selectedRepetitions = 0;
+
+  int get selectedRepetitions => _selectedRepetitions;
+
+  void setSelectedRepetitions(int repetitions) {
+    _selectedRepetitions = repetitions;
+    notifyListeners();
+  }
+}
