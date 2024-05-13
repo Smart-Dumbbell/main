@@ -7,6 +7,7 @@ import 'dart:async';
  
 import 'package:flutter/cupertino.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
+import 'package:provider/provider.dart';
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
 
