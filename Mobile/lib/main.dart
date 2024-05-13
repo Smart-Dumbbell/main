@@ -95,7 +95,13 @@ class _HomePageState extends State<HomePage> {
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
+          setState(() {
+            isBluetoothConnected.value  = true;
+          });
           _onConnected(d.id);
+        }
+        else {
+          isBluetoothConnected.value = false;
         }
       });
     }
@@ -165,16 +171,27 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Your code here for Bluetooth button
-          _scanSub?.cancel();
-          _found = false;
-          setState(() {});
-          _scanSub = _ble.scanForDevices(withServices: []).listen(_onScanUpdate);
-        },
-        tooltip: 'Bluetooth',
-        child: Icon(Icons.bluetooth),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(top: 20, right: 20),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: isBluetoothConnected,
+          builder: (context, value, child) {
+            return IconButton(
+              icon: Icon(
+                Icons.bluetooth,
+                color: value ? Colors.blue : Colors.red,
+                size: 30,
+              ),
+              onPressed: () {
+                _scanSub?.cancel();
+                _found = false;
+                setState(() {});
+                _scanSub = _ble.scanForDevices(withServices: []).listen(_onScanUpdate);
+              },
+            );
+          },
+        ),
       ),
     );
   }
