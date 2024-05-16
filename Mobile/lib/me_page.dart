@@ -100,16 +100,16 @@ class _ProfilePageState extends State<MePage> {
   }
 }
 
-class ProgressPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Progress Page'),
-      ),
-      body: Center(
-        child: Text('This is the Progress Page'),
-      ),
-    );
-  }
-}
+// class ProgressPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Progress Page'),
+//       ),
+//       body: Center(
+//         child: Text('This is the Progress Page'),
+//       ),
+//     );
+//   }
+// }
