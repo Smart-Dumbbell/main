@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class GoalPage extends StatefulWidget {
   final Function(int) onGoalSelected;
-
   const GoalPage({required this.onGoalSelected});
-
   @override
   _GoalPageState createState() => _GoalPageState();
 }
+
 
 class _GoalPageState extends State<GoalPage> {
   late SharedPreferences _prefs;
@@ -30,11 +30,35 @@ class _GoalPageState extends State<GoalPage> {
   }
 
   // Save the selected box index to SharedPreferences
+  // Future<void> _saveSelectedBox(int index) async {
+  //   setState(() {
+  //     _selectedBox = index;
+  //   });
+  //   await _prefs.setInt('selectedBox', index);
+  // }
   Future<void> _saveSelectedBox(int index) async {
     setState(() {
       _selectedBox = index;
     });
     await _prefs.setInt('selectedBox', index);
+    widget.onGoalSelected(index);
+
+    // Update RepetitionsProvider with the selected repetitions
+    Provider.of<RepetitionsProvider>(context, listen: false).setSelectedRepetitions(_getSelectedRepetitions(index));
+  }
+
+  // Helper function to get selected repetitions based on the box index
+  int _getSelectedRepetitions(int index) {
+    switch (index) {
+      case 0:
+        return 20;
+      case 1:
+        return 30;
+      case 2:
+        return 40;
+      default:
+        return 0;
+    }
   }
 
   @override
