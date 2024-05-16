@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:smart_dumbbell_mobile/main.dart'; // Import main.dart for isBluetoothConnected
+import 'package:smart_dumbbell_mobile/main.dart'; 
 import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
 
@@ -63,9 +64,13 @@ class _StartPageState extends State<StartPage> {
     );
 
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
+      
       setState(() {
-        // handle bytes if needed
+        value = const Utf8Decoder().convert(bytes);
       });
+
+      logger.d(value);
+
     });
   }
 
