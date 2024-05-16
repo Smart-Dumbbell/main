@@ -10,7 +10,10 @@ import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'package:smart_dumbbell_mobile/me_page.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:logger/logger.dart' as myLogger;
+
+import 'package:logger/logger.dart' as MyLogger;
+import 'package:smart_dumbbell_mobile/progress_page.dart';
+
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
 
