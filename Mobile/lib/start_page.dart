@@ -6,6 +6,16 @@ import 'dart:convert';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
 
+int repetitions = 0;
+
+void updateRepetitions(int newReps) {
+  repetitions = newReps;
+}
+
+void resetRepetitions() {
+  repetitions = 0;
+}
+
 class StartPage extends StatefulWidget {
   @override
   _StartPageState createState() => _StartPageState();
@@ -13,11 +23,9 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   final _ble = FlutterReactiveBle();
-
   StreamSubscription<DiscoveredDevice>? _scanSub;
   StreamSubscription<ConnectionStateUpdate>? _connectSub;
   StreamSubscription<List<int>>? _notifySub;
-
   var _found = false;
   var _isLoading = false;
   final logger = myLogger.Logger();
@@ -64,14 +72,21 @@ class _StartPageState extends State<StartPage> {
     );
 
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
-      
       setState(() {
         value = const Utf8Decoder().convert(bytes);
+        logger.d(value);
+        _parseAndSaveRepetitions(value);
       });
-
-      logger.d(value);
-
     });
+  }
+
+  void _parseAndSaveRepetitions(String data) {    // parse string and save int
+    final regex = RegExp(r'\d+');
+    final match = regex.firstMatch(data);
+    if (match != null) {
+      final repetitions = int.parse(match.group(0)!);
+      updateRepetitions(repetitions);
+    }
   }
 
   void _startBluetoothScan() {
@@ -96,6 +111,7 @@ class _StartPageState extends State<StartPage> {
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
+                resetRepetitions(); // Reset repetitions when starting a new workout
                 _startBluetoothScan();
               },
               style: ElevatedButton.styleFrom(
