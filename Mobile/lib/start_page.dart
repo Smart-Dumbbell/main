@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_dumbbell_mobile/main.dart'; 
+import 'package:smart_dumbbell_mobile/main.dart';
 import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -28,6 +28,7 @@ class _StartPageState extends State<StartPage> {
   StreamSubscription<List<int>>? _notifySub;
   var _found = false;
   var _isLoading = false;
+  Timer? _connectionTimeoutTimer;
   final logger = myLogger.Logger();
 
   @override
@@ -35,6 +36,7 @@ class _StartPageState extends State<StartPage> {
     _notifySub?.cancel();
     _connectSub?.cancel();
     _scanSub?.cancel();
+    _connectionTimeoutTimer?.cancel();
     super.dispose();
   }
 
@@ -44,13 +46,14 @@ class _StartPageState extends State<StartPage> {
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
+          _connectionTimeoutTimer?.cancel();
           setState(() {
             isBluetoothConnected.value = true;
             _isLoading = false;
           });
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WorkingPage()),
+            MaterialPageRoute(builder: (context) => WorkingPage(onEndWorkout: _disconnect)),
           );
           _onConnected(d.id);
         } else if (update.connectionState == DeviceConnectionState.disconnected) {
@@ -80,12 +83,12 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
-  void _parseAndSaveRepetitions(String data) {    // parse string and save int
+  void _parseAndSaveRepetitions(String data) {
     final regex = RegExp(r'\d+');
     final match = regex.firstMatch(data);
     if (match != null) {
-      final repetitions = int.parse(match.group(0)!);
-      updateRepetitions(repetitions);
+      final newRepetitions = int.parse(match.group(0)!);
+      updateRepetitions(newRepetitions);
     }
   }
 
@@ -95,7 +98,35 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       _isLoading = true;
     });
+    _connectionTimeoutTimer?.cancel();
+    _connectionTimeoutTimer = Timer(Duration(seconds: 10), () {
+      if (!_found) {
+        setState(() {
+          _isLoading = false;
+        });
+        // Replace the current page with a new instance of StartPage
+        setState(() {});
+      }
+    });
     _scanSub = _ble.scanForDevices(withServices: []).listen(_onScanUpdate);
+  }
+
+  void _disconnect() {
+    logger.d('Disconnecting from BLE device');
+    _connectSub?.cancel();
+    _notifySub?.cancel();
+    setState(() {
+      isBluetoothConnected.value = false;
+      _isLoading = false;
+    });
+  }
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -106,22 +137,20 @@ class _StartPageState extends State<StartPage> {
       ),
       body: Stack(
         children: <Widget>[
-          // Start button
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                resetRepetitions(); // Reset repetitions when starting a new workout
+                resetRepetitions();
                 _startBluetoothScan();
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
-                padding: EdgeInsets.all(120), // Adjust the size of the button
+                padding: EdgeInsets.all(120),
               ),
-              child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
+              child: Text('START', style: TextStyle(fontSize: 50)),
             ),
           ),
-          // Loading indicator
           if (_isLoading)
             Container(
               color: Colors.white,

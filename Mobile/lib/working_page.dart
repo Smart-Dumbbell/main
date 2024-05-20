@@ -8,6 +8,10 @@ import 'package:smart_dumbbell_mobile/report_page.dart';
 String elapsedTime = "";
 
 class WorkingPage extends StatefulWidget {
+  final VoidCallback onEndWorkout;
+
+  WorkingPage({required this.onEndWorkout});
+
   @override
   _WorkingPageState createState() => _WorkingPageState();
 }
@@ -118,6 +122,7 @@ class _WorkingPageState extends State<WorkingPage> {
                   ElevatedButton(
                     onPressed: () {
                       elapsedTime = getElapsedTime();
+                      widget.onEndWorkout();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ReportPage()),
