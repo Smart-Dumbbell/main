@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:smart_dumbbell_mobile/report_page.dart';
 
+String elapsedTime = "";
 
 class WorkingPage extends StatefulWidget {
   @override
@@ -12,101 +15,122 @@ class WorkingPage extends StatefulWidget {
 class _WorkingPageState extends State<WorkingPage> {
   late Stopwatch stopwatch;
   late Timer t;
- 
-  void handleStartStop() {
-    if(stopwatch.isRunning) {
-      stopwatch.stop();
-    }
-    else {
-      stopwatch.start();
-    }
-  }
- 
-  String returnFormattedText() {
-    var milli = stopwatch.elapsed.inMilliseconds;
- 
-    String milliseconds = (milli % 1000).toString().padLeft(3, "0"); // this one for the miliseconds
-    String seconds = ((milli ~/ 1000) % 60).toString().padLeft(2, "0"); // this is for the second
-    String minutes = ((milli ~/ 1000) ~/ 60).toString().padLeft(2, "0"); // this is for the minute
- 
-    return "$minutes:$seconds:$milliseconds";
-  }
- 
+
   @override
   void initState() {
     super.initState();
     stopwatch = Stopwatch();
- 
+    stopwatch.start();
+
     t = Timer.periodic(Duration(milliseconds: 30), (timer) {
-      setState(() {});
+      if (stopwatch.isRunning) {
+        setState(() {});
+      }
     });
   }
 
   @override
   void dispose() {
-    t.cancel(); // Cancel the timer in dispose()
+    t.cancel();
+    stopwatch.stop();
     super.dispose();
   }
- 
+
+  String returnFormattedText() {
+    final milliseconds = (stopwatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, "0");
+    final seconds = ((stopwatch.elapsed.inSeconds % 60)).toString().padLeft(2, "0");
+    final minutes = (stopwatch.elapsed.inMinutes).toString().padLeft(2, "0");
+
+    return "$minutes:$seconds:$milliseconds";
+  }
+
+  String getElapsedTime() {
+    return returnFormattedText();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: Column( // this is the column
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
- 
-              CupertinoButton(
-                onPressed: () {
-                  handleStartStop();
-                },
-                padding: EdgeInsets.all(0),
-                child: Container(
-                  height: 250,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,  // this one is use for make the circle on ui.
-                    border: Border.all(
-                      color: Color(0xff0395eb),
-                      width: 4,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Consumer<RepetitionsProvider>(
+                    builder: (context, repetitionsProvider, child) {
+                      return Text(
+                        'Goal Repetitions: ${repetitionsProvider.selectedRepetitions}',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      );
+                    },
+                  ),
+                  CupertinoButton(
+                    onPressed: () {
+                      setState(() {
+                        if (stopwatch.isRunning) {
+                          stopwatch.stop();
+                        } else {
+                          stopwatch.start();
+                        }
+                      });
+                    },
+                    padding: EdgeInsets.all(0),
+                    child: Container(
+                      height: 250,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Color(0xff0395eb),
+                          width: 4,
+                        ),
+                      ),
+                      child: Text(
+                        returnFormattedText(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                  child: Text(returnFormattedText(), style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),),
-                ),
-              ),
- 
-              SizedBox(height: 15,),
- 
-              CupertinoButton(     // this the cupertino button and here we perform all the reset button function
-                onPressed: () {
-                  stopwatch.reset();
-                },
-                padding: EdgeInsets.all(0),
-                child: Text("Reset", style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),),
-              ),
-              
-              SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ReportPage()),
-                  );
-                },
-                child: Text("End Workout Section"),
+                  SizedBox(height: 15),
+                  CupertinoButton(
+                    onPressed: () {
+                      setState(() {
+                        stopwatch.reset();
+                      });
+                    },
+                    padding: EdgeInsets.all(0),
+                    child: Text(
+                      "Reset",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () {
+                      elapsedTime = getElapsedTime();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ReportPage()),
+                      );
+                    },
+                    child: Text("End Workout Session"),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
-    ); 
+    );
   }
 }
