@@ -1,10 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:smart_dumbbell_mobile/main.dart'; 
-import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
+import 'package:path_provider/path_provider.dart';
+import 'package:smart_dumbbell_mobile/global.dart';
+import 'package:smart_dumbbell_mobile/main.dart'; 
+import 'package:smart_dumbbell_mobile/working_page.dart';
+
 
 double repetitions = 0;
 double shoulder = 0;
@@ -98,12 +102,14 @@ class _StartPageState extends State<StartPage> {
 
   void _parseAndSaveRepetitions(String data) {
     final regex = RegExp(r'(\w+):(\d+)');
+
     final match = regex.firstMatch(data);
 
     if (match != null) {
       final type = match.group(1)!;
       final repetitions = double.parse(match.group(2)!);
       updateRepetitions(repetitions, type);
+
     }
   }
 

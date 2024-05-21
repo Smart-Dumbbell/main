@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:smart_dumbbell_mobile/report_page.dart';
+import 'package:smart_dumbbell_mobile/global.dart';
 
 String elapsedTime = "";
 
@@ -59,13 +60,49 @@ class _WorkingPageState extends State<WorkingPage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Consumer<RepetitionsProvider>(
+                  //   builder: (context, repetitionsProvider, child) {
+                  //     return Text(
+                  //       'Goal Repetitions: ${repetitionsProvider.selectedRepetitions}',
+                  //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  //     );
+                  //   },
+                  // ),
+                  // GestureDetector(
+                  //   child: Container(
+                  //     width: 200, // Set the desired width
+                  //     height: 10, // Set the desired height
+                  //     child: LinearProgressIndicator(
+                  //       value: repetitions_count / repetitionsProvider.selectedRepetitions,
+                  //     ),
+                  //   ),
+                  // ),
                   Consumer<RepetitionsProvider>(
                     builder: (context, repetitionsProvider, child) {
-                      return Text(
-                        'Goal Repetitions: ${repetitionsProvider.selectedRepetitions}',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      return Column(
+                        children: [
+                          Text(
+                            'Goal Repetitions: ${repetitionsProvider.selectedRepetitions}',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          GestureDetector(
+                            child: Container(
+                              width: 200, // Set the desired width
+                              height: 10, // Set the desired height
+                              child: LinearProgressIndicator(
+                                value: shoulder_repetitions_count / repetitionsProvider.selectedRepetitions,
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
+                  ),
+                  SizedBox(height: 10),
+                  // Display count below the progress bar
+                  Text(
+                    'Count: $repetitions_count',
+                    style: TextStyle(fontSize: 24),
                   ),
                   CupertinoButton(
                     onPressed: () {
