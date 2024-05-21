@@ -77,13 +77,13 @@ Widget getBottomTitles(double value, TitleMeta meta) {
   Widget text;
   switch (value.toInt()) {
     case 1:
-      text = const Text('Incomplete', style: style);
+      text = const Text('Shoulder', style: style);
       break;
     case 2:
-      text = const Text('Complete', style: style);
+      text = const Text('Bicep', style: style);
       break;
     case 3:
-      text = const Text('Total', style: style);
+      text = const Text('Tricep', style: style);
       break;
     default:
       text = const Text('', style: style);
