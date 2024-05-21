@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_dumbbell_mobile/main.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
-
+import 'package:smart_dumbbell_mobile/working_page.dart';
 
 
 class ReportPage extends StatelessWidget {
@@ -95,26 +95,42 @@ class ReportPage extends StatelessWidget {
     String gender = prefs.getString('gender') ?? '';
 
     // Use the retrieved data to calculate calories burned
-    double caloriesBurned = _calculateCalories(age, height, weight, gender);
+    double caloriesBurned = _calculateCalories(age, height, weight, gender, elapsedTime);
     return caloriesBurned;
   }
 
-  double _calculateCalories(int age, double height, double weight, String gender) {
-    //bmr x met x time in hours
+  double _calculateCalories(int age, double height, double weight, String gender, String elapsedTime) {
+    // Convert elapsed time to hours
+    double timeInHours = _convertElapsedTimeToHours(elapsedTime);
+
+    // Calculate BMR
     double bmr;
     if (gender == 'male') {
       bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
     } else {
       bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
     }
-    //////random met until time functionality is working
-    List<double> METLIST = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5];
-    Random random = Random();
-    int randomIndex = random.nextInt(METLIST.length);
-    double randomMET = METLIST[randomIndex];
 
-    double dummytime = 2 / 60;  //dummy time
-    double caloriesBurned = bmr * randomMET * dummytime;
+    // Calculate MET value based on elapsed time
+    double timeInMinutes = timeInHours * 60;
+    double metValue = 1.0 + max(0, timeInMinutes - 2) * 0.15;
+
+    // Calculate calories burned
+    double caloriesBurned = bmr * metValue * timeInHours;
     return caloriesBurned;
+  }
+
+  double _convertElapsedTimeToHours(String elapsedTime) {
+    List<String> parts = elapsedTime.split(':');
+    if (parts.length != 3) {
+      throw ArgumentError('time format wrong');
+    }
+
+    int minutes = int.parse(parts[0]);
+    int seconds = int.parse(parts[1]);
+    int milliseconds = int.parse(parts[2]);
+
+    double totalHours = minutes / 60 + seconds / 3600 + milliseconds / 3600000;
+    return totalHours;
   }
 }
