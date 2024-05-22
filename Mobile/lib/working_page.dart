@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:smart_dumbbell_mobile/report_page.dart';
 import 'package:smart_dumbbell_mobile/global.dart';
+import 'package:smart_dumbbell_mobile/progress_page.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 String elapsedTime = "";
 
@@ -43,6 +47,23 @@ class _WorkingPageState extends State<WorkingPage> {
     final minutes = (stopwatch.elapsed.inMinutes).toString().padLeft(2, "0");
 
     return "$minutes:$seconds:$milliseconds";
+  }
+
+   void endSession(BuildContext context) async {
+    final reps = {
+      'shoulders': shoulder_repetitions_count.toDouble(), 
+      'bicep': bicep_repetitions_count.toDouble(),
+      'tricep': tricep_repetitions_count.toDouble(), 
+    };
+
+    final duration = elapsedTime;
+    final calories = caloriesBurned;
+
+    addSession(context, reps, duration, calories);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ReportPage()),
+    );
   }
 
   String getElapsedTime() {
@@ -101,7 +122,7 @@ class _WorkingPageState extends State<WorkingPage> {
                   SizedBox(height: 10),
                   // Display count below the progress bar
                   Text(
-                    'Count: $repetitions_count',
+                    'Count: $bicep_repetitions_count',
                     style: TextStyle(fontSize: 24),
                   ),
                   CupertinoButton(
@@ -155,6 +176,7 @@ class _WorkingPageState extends State<WorkingPage> {
                   ElevatedButton(
                     onPressed: () {
                       elapsedTime = getElapsedTime();
+                      endSession(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ReportPage()),
@@ -170,4 +192,13 @@ class _WorkingPageState extends State<WorkingPage> {
       ),
     );
   }
+}
+
+void addSession(BuildContext context, Map<String, double> reps, String duration, double calories) async {
+  final storage = ActivityStorage();
+  List<Session> sessions = await storage.loadActivities();
+  sessions.add(Session(reps: reps, duration: duration, calories: calories));
+  await storage.saveActivities(sessions);
+  final progressPageState = context.findAncestorStateOfType<ProgressPageState>();
+  progressPageState?.loadActivities();
 }

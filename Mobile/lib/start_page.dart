@@ -5,21 +5,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
+import 'package:smart_dumbbell_mobile/global.dart';
 
-double repetitions = 0;
-double shoulder = 0;
-double tricep = 0;
+
+
 
 void updateRepetitions(double newReps, String type) {
   switch (type) {
     case 'Bicep':
-      repetitions = newReps;
+      bicep_repetitions_count = newReps;
       break;
     case 'Shoulder':
-      shoulder = newReps;
+      shoulder_repetitions_count = newReps;
       break;
     case 'Tricep':
-      tricep = newReps;
+      tricep_repetitions_count = newReps;
       break;
     default:
       break;
@@ -27,9 +27,9 @@ void updateRepetitions(double newReps, String type) {
 }
 
 void resetRepetitions() {
-  repetitions = 0;
-  shoulder = 0;
-  tricep = 0;
+  bicep_repetitions_count = 0;
+  shoulder_repetitions_count = 0;
+  tricep_repetitions_count = 0;
 }
 
 class StartPage extends StatefulWidget {
@@ -128,8 +128,12 @@ class _StartPageState extends State<StartPage> {
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                resetRepetitions();
-                _startBluetoothScan();
+                // resetRepetitions();
+                // _startBluetoothScan();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WorkingPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),

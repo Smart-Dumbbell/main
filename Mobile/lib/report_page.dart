@@ -6,11 +6,12 @@ import 'package:smart_dumbbell_mobile/main.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
 import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'package:smart_dumbbell_mobile/start_page.dart';
+import 'package:smart_dumbbell_mobile/global.dart';
 
 double caloriesBurned = 0;
 
 class ReportPage extends StatelessWidget {
-  List<double> repcount = [shoulder, repetitions , tricep]; // dummy data
+  List<double> repcount = [shoulder_repetitions_count, bicep_repetitions_count , tricep_repetitions_count]; 
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class ReportPage extends StatelessWidget {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   // Display the calculated calories burned
-                  return Text('Calories burned: ${snapshot.data?.toStringAsFixed(2)}');
+                  return Text('Calories burned: ${snapshot.data?.toStringAsFixed(0)}');
                 }
               },
             ),
@@ -110,6 +111,7 @@ class ReportPage extends StatelessWidget {
 
     // Calculate calories burned
     double caloriesBurned = bmr * metValue * timeInHours;
+    caloriesBurned = caloriesBurned.roundToDouble();
     return caloriesBurned;
   }
 

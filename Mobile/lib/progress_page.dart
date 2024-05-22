@@ -5,9 +5,7 @@ import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'package:smart_dumbbell_mobile/main.dart';
 
 import 'package:flutter/material.dart';
-
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressPage extends StatefulWidget {
@@ -27,14 +25,12 @@ class ProgressPageState extends State<ProgressPage> {
   }
 
   Future<void> loadActivities() async {
-    final storage = ActivityStorage(); // Create an instance of ActivityStorage
-    final loadedSessions = await storage.loadActivities(); // Call loadActivities from ActivityStorage
+    final storage = ActivityStorage();
+    final loadedSessions = await storage.loadActivities();
     setState(() {
       sessions = loadedSessions;
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +104,7 @@ class ActivityItem extends StatelessWidget {
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage('assets/bicepcurl.jpg'), // You can change this based on the activity
+                    image: AssetImage('assets/bicepcurl.jpg'),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -127,7 +123,7 @@ class ActivityItem extends StatelessWidget {
               style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
             ),
             const SizedBox(width: 10),
-            const Icon(Icons.fitness_center, size: 12), // Changed icon to represent reps
+            const Icon(Icons.fitness_center, size: 12),
             const SizedBox(width: 5),
             Text(
               reps,
@@ -157,9 +153,9 @@ class Session {
 
   factory Session.fromJson(Map<String, dynamic> json) {
     return Session(
-      reps: Map<String, double>.from(json['reps']),
+      reps: (json['reps'] as Map<String, dynamic>).map((key, value) => MapEntry(key, num.parse(value.toString()).toDouble())),
       duration: json['duration'],
-      calories: json['calories'],
+      calories: num.parse(json['calories'].toString()).toDouble(),
     );
   }
 
@@ -172,11 +168,11 @@ class Session {
   }
 }
 
+
 class ActivityStorage {
   static const _keyActivities = 'activities';
 
   Future<void> saveActivities(List<Session> sessions) async {
-    // Keep only the last 10 sessions
     final last10Sessions = sessions.length <= 10 
         ? sessions 
         : sessions.sublist(sessions.length - 10);
@@ -196,28 +192,4 @@ class ActivityStorage {
       return [];
     }
   }
-}
-
-void addNewSession(BuildContext context) async {
-  final reps = {
-    'shoulders': shoulder,
-    'bicep': repetitions,
-    'tricep': tricep,
-  };
-
-  final duration = elapsedTime;
-  final calories = caloriesBurned;
-
-  addSession(context, reps, duration, calories);
-}
-
-
-// Function to add a new session (could be called from a button press or other event)
-void addSession(BuildContext context, Map<String, double> reps, String duration, double calories) async {
-  final storage = ActivityStorage();
-  List<Session> sessions = await storage.loadActivities();
-  sessions.add(Session(reps: reps, duration: duration, calories: calories));
-  await storage.saveActivities(sessions);
-  final progressPageState = context.findAncestorStateOfType<ProgressPageState>();
-  progressPageState?.loadActivities();
 }

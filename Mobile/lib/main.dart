@@ -1,5 +1,5 @@
 import 'dart:ffi';
-import 'dart:html';
+// import 'dart:html';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:convert';
@@ -15,10 +15,11 @@ import 'package:smart_dumbbell_mobile/goal_page.dart';
 
 import 'package:logger/logger.dart' as MyLogger;
 import 'package:smart_dumbbell_mobile/progress_page.dart';
+import 'package:smart_dumbbell_mobile/global.dart';
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
-var value = '';
+
 
 void main() {
   runApp(
