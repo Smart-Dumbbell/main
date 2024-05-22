@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:smart_dumbbell_mobile/start_page.dart';
 import 'package:smart_dumbbell_mobile/report_page.dart';
 import 'package:smart_dumbbell_mobile/working_page.dart';
+import 'package:smart_dumbbell_mobile/main.dart';
 
 import 'package:flutter/material.dart';
 
@@ -26,12 +27,20 @@ class ProgressPageState extends State<ProgressPage> {
   }
 
   Future<void> loadActivities() async {
-    final storage = ActivityStorage();
-    final loadedSessions = await storage.loadActivities();
+    final storage = ActivityStorage(); // Create an instance of ActivityStorage
+    final loadedSessions = await storage.loadActivities(); // Call loadActivities from ActivityStorage
     setState(() {
       sessions = loadedSessions;
     });
   }
+
+  // Future<void> loadActivities() async {
+  //   final storage = ActivityStorage();
+  //   final loadedSessions = await storage.loadActivities();
+  //   setState(() {
+  //     sessions = loadedSessions;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

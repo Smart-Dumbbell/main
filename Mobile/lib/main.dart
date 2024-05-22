@@ -105,14 +105,14 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) {
           _onItemTapped(index);
           if (index == 2) { // If ProgressPage is selected
-            _loadActivities(context); // Call the method to reload activities
+            loadActivities(context);
           }
         },
       ),
     );
   }
 
-  void _loadActivities(BuildContext context) {
+  void loadActivities(BuildContext context) {
     final progressPageState = context.findAncestorStateOfType<ProgressPageState>();
     progressPageState?.loadActivities();
   }
