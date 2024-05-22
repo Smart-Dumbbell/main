@@ -97,7 +97,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _parseAndSaveRepetitions(String data) {
-    final regex = RegExp(r'(\w+):(\d+)');
+    final regex = RegExp(r'(\w+) (\d+)');
     final match = regex.firstMatch(data);
 
     if (match != null) {

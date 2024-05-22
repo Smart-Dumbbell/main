@@ -34,13 +34,7 @@ class ProgressPageState extends State<ProgressPage> {
     });
   }
 
-  // Future<void> loadActivities() async {
-  //   final storage = ActivityStorage();
-  //   final loadedSessions = await storage.loadActivities();
-  //   setState(() {
-  //     sessions = loadedSessions;
-  //   });
-  // }
+
 
   @override
   Widget build(BuildContext context) {
