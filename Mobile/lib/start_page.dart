@@ -6,14 +6,30 @@ import 'dart:convert';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
 
-int repetitions = 0;
+double repetitions = 0;
+double shoulder = 0;
+double tricep = 0;
 
-void updateRepetitions(int newReps) {
-  repetitions = newReps;
+void updateRepetitions(double newReps, String type) {
+  switch (type) {
+    case 'Bicep':
+      repetitions = newReps;
+      break;
+    case 'Shoulder':
+      shoulder = newReps;
+      break;
+    case 'Tricep':
+      tricep = newReps;
+      break;
+    default:
+      break;
+  }
 }
 
 void resetRepetitions() {
   repetitions = 0;
+  shoulder = 0;
+  tricep = 0;
 }
 
 class StartPage extends StatefulWidget {
@@ -80,12 +96,14 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
-  void _parseAndSaveRepetitions(String data) {    // parse string and save int
-    final regex = RegExp(r'\d+');
+  void _parseAndSaveRepetitions(String data) {
+    final regex = RegExp(r'(\w+):(\d+)');
     final match = regex.firstMatch(data);
+
     if (match != null) {
-      final repetitions = int.parse(match.group(0)!);
-      updateRepetitions(repetitions);
+      final type = match.group(1)!;
+      final repetitions = double.parse(match.group(2)!);
+      updateRepetitions(repetitions, type);
     }
   }
 
@@ -106,22 +124,20 @@ class _StartPageState extends State<StartPage> {
       ),
       body: Stack(
         children: <Widget>[
-          // Start button
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                resetRepetitions(); // Reset repetitions when starting a new workout
+                resetRepetitions();
                 _startBluetoothScan();
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
-                padding: EdgeInsets.all(120), // Adjust the size of the button
+                padding: EdgeInsets.all(120),
               ),
-              child: Text('START', style: TextStyle(fontSize: 50)), // Adjust the size of the font
+              child: Text('START', style: TextStyle(fontSize: 50)),
             ),
           ),
-          // Loading indicator
           if (_isLoading)
             Container(
               color: Colors.white,
