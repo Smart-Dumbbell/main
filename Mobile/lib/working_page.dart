@@ -7,8 +7,6 @@ import 'package:smart_dumbbell_mobile/report_page.dart';
 import 'package:smart_dumbbell_mobile/global.dart';
 import 'package:smart_dumbbell_mobile/progress_page.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 
 String elapsedTime = "";
 

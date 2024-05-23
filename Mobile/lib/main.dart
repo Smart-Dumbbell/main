@@ -1,21 +1,9 @@
-import 'dart:ffi';
-// import 'dart:html';
-import 'dart:math';
-import 'dart:ui';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'dart:async';
-// import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_dumbbell_mobile/start_page.dart';
-// import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'package:smart_dumbbell_mobile/me_page.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
-// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-
-import 'package:logger/logger.dart' as MyLogger;
 import 'package:smart_dumbbell_mobile/progress_page.dart';
-import 'package:smart_dumbbell_mobile/global.dart';
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);

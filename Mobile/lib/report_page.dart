@@ -5,10 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_dumbbell_mobile/main.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
 import 'package:smart_dumbbell_mobile/working_page.dart';
-import 'package:smart_dumbbell_mobile/start_page.dart';
 import 'package:smart_dumbbell_mobile/global.dart';
 
-double caloriesBurned = 0;
 
 class ReportPage extends StatelessWidget {
   List<double> repcount = [shoulder_repetitions_count, bicep_repetitions_count , tricep_repetitions_count]; 

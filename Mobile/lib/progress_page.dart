@@ -1,9 +1,3 @@
-import 'dart:math';
-import 'package:smart_dumbbell_mobile/start_page.dart';
-import 'package:smart_dumbbell_mobile/report_page.dart';
-import 'package:smart_dumbbell_mobile/working_page.dart';
-import 'package:smart_dumbbell_mobile/main.dart';
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
