@@ -29,13 +29,6 @@ class _GoalPageState extends State<GoalPage> {
     });
   }
 
-  // Save the selected box index to SharedPreferences
-  // Future<void> _saveSelectedBox(int index) async {
-  //   setState(() {
-  //     _selectedBox = index;
-  //   });
-  //   await _prefs.setInt('selectedBox', index);
-  // }
   Future<void> _saveSelectedBox(int index) async {
     setState(() {
       _selectedBox = index;

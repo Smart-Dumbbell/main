@@ -1,22 +1,13 @@
-import 'dart:math';
-import 'dart:ui';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'dart:async';
-// import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_dumbbell_mobile/start_page.dart';
-// import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'package:smart_dumbbell_mobile/me_page.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
-// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-
-import 'package:logger/logger.dart' as MyLogger;
 import 'package:smart_dumbbell_mobile/progress_page.dart';
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
-var value = '';
+
 
 void main() {
   runApp(
@@ -100,8 +91,18 @@ class _HomePageState extends State<HomePage> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          _onItemTapped(index);
+          if (index == 2) { // If ProgressPage is selected
+            loadActivities(context);
+          }
+        },
       ),
     );
+  }
+
+  void loadActivities(BuildContext context) {
+    final progressPageState = context.findAncestorStateOfType<ProgressPageState>();
+    progressPageState?.loadActivities();
   }
 }

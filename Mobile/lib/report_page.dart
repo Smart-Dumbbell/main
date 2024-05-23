@@ -5,10 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_dumbbell_mobile/main.dart';
 import 'package:smart_dumbbell_mobile/bar_graphs/bar_graph.dart';
 import 'package:smart_dumbbell_mobile/working_page.dart';
+import 'package:smart_dumbbell_mobile/global.dart';
 
 
 class ReportPage extends StatelessWidget {
-  List<double> repcount = [10, 25, 35]; // dummy data
+  List<double> repcount = [shoulder_repetitions_count, bicep_repetitions_count , tricep_repetitions_count]; 
 
   @override
   Widget build(BuildContext context) {
@@ -42,21 +43,12 @@ class ReportPage extends StatelessWidget {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   // Display the calculated calories burned
-                  return Text('Calories burned: ${snapshot.data}');
+                  return Text('Calories burned: ${snapshot.data?.toStringAsFixed(0)}');
                 }
               },
             ),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              // children: [
-              //   Text('Calories burned: '),
-              //   // Replace '0' with the actual calculated calories burned
-              //   //For men: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
-              //   //For women: BMR = (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
-              //   //MET for 10lb = 2 20 = 2.2 30 = 2.4 
-              //   //cal burned = (BMR * MET * duration(in hours)) / 10
-              //   Text('1'),
-              // ],
+  
             ),
             SizedBox(height: 10),
             Row(
@@ -64,7 +56,7 @@ class ReportPage extends StatelessWidget {
               children: [
                 Text('Time: '),
                 // dummy time
-                Text('0:00'),
+                Text(elapsedTime),
               ],
             ),
             SizedBox(height: 20),
@@ -95,7 +87,7 @@ class ReportPage extends StatelessWidget {
     String gender = prefs.getString('gender') ?? '';
 
     // Use the retrieved data to calculate calories burned
-    double caloriesBurned = _calculateCalories(age, height, weight, gender, elapsedTime);
+    caloriesBurned = _calculateCalories(age, height, weight, gender, elapsedTime);
     return caloriesBurned;
   }
 
@@ -117,6 +109,7 @@ class ReportPage extends StatelessWidget {
 
     // Calculate calories burned
     double caloriesBurned = bmr * metValue * timeInHours;
+    caloriesBurned = caloriesBurned.roundToDouble();
     return caloriesBurned;
   }
 
