@@ -1,30 +1,43 @@
-import 'dart:math';
-import 'dart:ui';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'dart:async';
-// import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_dumbbell_mobile/start_page.dart';
-// import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'package:smart_dumbbell_mobile/me_page.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
-// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-
-import 'package:logger/logger.dart' as MyLogger;
 import 'package:smart_dumbbell_mobile/progress_page.dart';
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
 var value = '';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final initialRepetitions = await _loadInitialRepetitions();
   runApp(
     ChangeNotifierProvider(
-      create: (context) => RepetitionsProvider(),
+      create: (context) => RepetitionsProvider(initialRepetitions),
       child: MyApp(),
     ),
   );
+}
+
+Future<int> _loadInitialRepetitions() async {
+  final prefs = await SharedPreferences.getInstance();
+  final selectedBox = prefs.getInt('selectedBox') ?? 3;
+  return _getSelectedRepetitions(selectedBox);
+}
+
+int _getSelectedRepetitions(int index) {
+  switch (index) {
+    case 0:
+      return 20;
+    case 1:
+      return 30;
+    case 2:
+      return 40;
+    default:
+      return 0;
+  }
 }
 
 class MyApp extends StatelessWidget {

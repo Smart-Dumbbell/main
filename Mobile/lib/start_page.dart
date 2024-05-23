@@ -4,8 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
-import 'package:path_provider/path_provider.dart';
-import 'package:smart_dumbbell_mobile/global.dart';
 import 'package:smart_dumbbell_mobile/main.dart'; 
 import 'package:smart_dumbbell_mobile/working_page.dart';
 
@@ -13,11 +11,13 @@ import 'package:smart_dumbbell_mobile/working_page.dart';
 double repetitions = 0;
 double shoulder = 0;
 double tricep = 0;
+final logger = myLogger.Logger();
 
 void updateRepetitions(double newReps, String type) {
   switch (type) {
     case 'Bicep':
       repetitions = newReps;
+      logger.d("working");
       break;
     case 'Shoulder':
       shoulder = newReps;
@@ -48,7 +48,6 @@ class _StartPageState extends State<StartPage> {
   StreamSubscription<List<int>>? _notifySub;
   var _found = false;
   var _isLoading = false;
-  final logger = myLogger.Logger();
 
   @override
   void dispose() {
@@ -101,7 +100,8 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _parseAndSaveRepetitions(String data) {
-    final regex = RegExp(r'(\w+):(\d+)');
+    final regex = RegExp(r'(\w+) (\d+)');
+    logger.d("parsing");
 
     final match = regex.firstMatch(data);
 
@@ -134,8 +134,12 @@ class _StartPageState extends State<StartPage> {
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                resetRepetitions();
-                _startBluetoothScan();
+                // resetRepetitions();
+                // _startBluetoothScan();
+                 Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WorkingPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
