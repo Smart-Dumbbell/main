@@ -127,12 +127,12 @@ class _StartPageState extends State<StartPage> {
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                // resetRepetitions();
-                // _startBluetoothScan();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WorkingPage()),
-                );
+                resetRepetitions();
+                _startBluetoothScan();
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => WorkingPage()),
+                // );
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),

@@ -93,14 +93,14 @@ class _WorkingPageState extends State<WorkingPage> {
                                 width: 250, // Set the desired width
                                 height: 10, // Set the desired height
                                 child: LinearProgressIndicator(
-                                  value: repetitions / repetitionsProvider.selectedRepetitions,
+                                  value: bicep_repetitions_count / repetitionsProvider.selectedRepetitions,
                                 ),
                               ),
                             ),
                             SizedBox(height: 2.5),
                             // Display count below the progress bar
                             Text(
-                              'Bicep Count: $repetitions',
+                              'Bicep Count: $bicep_repetitions_count',
                               style: TextStyle(fontSize: 18),
                             ),
                             SizedBox(height: 2.5),
@@ -109,14 +109,14 @@ class _WorkingPageState extends State<WorkingPage> {
                                 width: 250, // Set the desired width
                                 height: 10, // Set the desired height
                                 child: LinearProgressIndicator(
-                                  value: shoulder / repetitionsProvider.selectedRepetitions,
+                                  value: shoulder_repetitions_count / repetitionsProvider.selectedRepetitions,
                                 ),
                               ),
                             ),
                             SizedBox(height: 2.5),
                             // Display count below the progress bar
                             Text(
-                              'shoulder Count: $repetitions',
+                              'shoulder Count: $shoulder_repetitions_count',
                               style: TextStyle(fontSize: 18),
                             ),
                             SizedBox(height: 2.5),
@@ -125,30 +125,30 @@ class _WorkingPageState extends State<WorkingPage> {
                                 width: 250, // Set the desired width
                                 height: 10, // Set the desired height
                                 child: LinearProgressIndicator(
-                                  value: tricep / repetitionsProvider.selectedRepetitions,
+                                  value: tricep_repetitions_count / repetitionsProvider.selectedRepetitions,
                                 ),
                               ),
                             ),
                             SizedBox(height: 2.5),
                             // Display count below the progress bar
                             Text(
-                              'tricep Count: $repetitions',
+                              'tricep Count: $tricep_repetitions_count',
                               style: TextStyle(fontSize: 18),
                             ),
                             SizedBox(height: 2.5),
                           ] else ... [
                             Text(
-                              'Bicep Count: $repetitions',
+                              'Bicep Count: $bicep_repetitions_count',
                               style: TextStyle(fontSize: 18),
                             ),
                             SizedBox(height: 2.5),
                             Text(
-                              'shoulder Count: $shoulder',
+                              'shoulder Count: $shoulder_repetitions_count',
                               style: TextStyle(fontSize: 18),
                             ),
                             SizedBox(height: 2.5),
                             Text(
-                              'tricep Count: $tricep',
+                              'tricep Count: $tricep_repetitions_count',
                               style: TextStyle(fontSize: 18),
                             ),
                             SizedBox(height: 2.5),
