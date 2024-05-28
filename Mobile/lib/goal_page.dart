@@ -10,10 +10,9 @@ class GoalPage extends StatefulWidget {
   _GoalPageState createState() => _GoalPageState();
 }
 
-
 class _GoalPageState extends State<GoalPage> {
   late SharedPreferences _prefs;
-  int _selectedBox = -1; // Initially no box is selected
+  int _selectedBox = 0; // Initially no box is selected
 
   @override
   void initState() {
@@ -25,10 +24,10 @@ class _GoalPageState extends State<GoalPage> {
   Future<void> _loadSelectedBox() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedBox = _prefs.getInt('selectedBox') ?? -1;
+      _selectedBox = _prefs.getInt('selectedBox') ?? 3;
     });
+    Provider.of<RepetitionsProvider>(context, listen: false).setSelectedRepetitions(_getSelectedRepetitions(_selectedBox));
   }
-
   Future<void> _saveSelectedBox(int index) async {
     setState(() {
       _selectedBox = index;
@@ -38,6 +37,8 @@ class _GoalPageState extends State<GoalPage> {
 
     // Update RepetitionsProvider with the selected repetitions
     Provider.of<RepetitionsProvider>(context, listen: false).setSelectedRepetitions(_getSelectedRepetitions(index));
+    // int selectedRepetitions = _getSelectedRepetitions(index);
+    // Provider.of<RepetitionsProvider>(context, listen: false).setSelectedRepetitions(selectedRepetitions);
   }
 
   // Helper function to get selected repetitions based on the box index
@@ -144,7 +145,9 @@ class PressableBox extends StatelessWidget {
 }
 
 class RepetitionsProvider extends ChangeNotifier {
-  int _selectedRepetitions = 0;
+  int _selectedRepetitions;
+
+  RepetitionsProvider(this._selectedRepetitions); // Initialize with the initial value
 
   int get selectedRepetitions => _selectedRepetitions;
 

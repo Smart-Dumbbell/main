@@ -44,7 +44,6 @@ class _StartPageState extends State<StartPage> {
   StreamSubscription<List<int>>? _notifySub;
   var _found = false;
   var _isLoading = false;
-  final logger = myLogger.Logger();
 
   @override
   void dispose() {

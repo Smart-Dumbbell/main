@@ -7,7 +7,6 @@ import 'package:smart_dumbbell_mobile/report_page.dart';
 import 'package:smart_dumbbell_mobile/global.dart';
 import 'package:smart_dumbbell_mobile/progress_page.dart';
 
-
 String elapsedTime = "";
 
 class WorkingPage extends StatefulWidget {
@@ -79,50 +78,92 @@ class _WorkingPageState extends State<WorkingPage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Consumer<RepetitionsProvider>(
-                  //   builder: (context, repetitionsProvider, child) {
-                  //     return Text(
-                  //       'Goal Repetitions: ${repetitionsProvider.selectedRepetitions}',
-                  //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  //     );
-                  //   },
-                  // ),
-                  // GestureDetector(
-                  //   child: Container(
-                  //     width: 200, // Set the desired width
-                  //     height: 10, // Set the desired height
-                  //     child: LinearProgressIndicator(
-                  //       value: repetitions_count / repetitionsProvider.selectedRepetitions,
-                  //     ),
-                  //   ),
-                  // ),
                   Consumer<RepetitionsProvider>(
                     builder: (context, repetitionsProvider, child) {
                       return Column(
                         children: [
-                          Text(
+                          if (repetitionsProvider.selectedRepetitions > 0) ...[
+                            Text(
                             'Goal Repetitions: ${repetitionsProvider.selectedRepetitions}',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          GestureDetector(
-                            child: Container(
-                              width: 200, // Set the desired width
-                              height: 10, // Set the desired height
-                              child: LinearProgressIndicator(
-                                value: shoulder_repetitions_count / repetitionsProvider.selectedRepetitions,
+                            ),
+                            SizedBox(height: 2.5),
+                            GestureDetector(
+                              child: Container(
+                                width: 250, // Set the desired width
+                                height: 10, // Set the desired height
+                                child: LinearProgressIndicator(
+                                  value: repetitions / repetitionsProvider.selectedRepetitions,
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 2.5),
+                            // Display count below the progress bar
+                            Text(
+                              'Bicep Count: $repetitions',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 2.5),
+                            GestureDetector(
+                              child: Container(
+                                width: 250, // Set the desired width
+                                height: 10, // Set the desired height
+                                child: LinearProgressIndicator(
+                                  value: shoulder / repetitionsProvider.selectedRepetitions,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 2.5),
+                            // Display count below the progress bar
+                            Text(
+                              'shoulder Count: $repetitions',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 2.5),
+                            GestureDetector(
+                              child: Container(
+                                width: 250, // Set the desired width
+                                height: 10, // Set the desired height
+                                child: LinearProgressIndicator(
+                                  value: tricep / repetitionsProvider.selectedRepetitions,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 2.5),
+                            // Display count below the progress bar
+                            Text(
+                              'tricep Count: $repetitions',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 2.5),
+                          ] else ... [
+                            Text(
+                              'Bicep Count: $repetitions',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 2.5),
+                            Text(
+                              'shoulder Count: $shoulder',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 2.5),
+                            Text(
+                              'tricep Count: $tricep',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 2.5),
+                          ]
                         ],
                       );
                     },
                   ),
-                  SizedBox(height: 10),
-                  // Display count below the progress bar
-                  Text(
-                    'Count: $bicep_repetitions_count',
-                    style: TextStyle(fontSize: 24),
-                  ),
+
+                  // SizedBox(height: 10),
+                  // // Display count below the progress bar
+                  // Text(
+                  //   'Count: $repetitions',
+                  //   style: TextStyle(fontSize: 18),
+                  // ),
                   CupertinoButton(
                     onPressed: () {
                       setState(() {
