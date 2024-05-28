@@ -216,10 +216,10 @@ class _WorkingPageState extends State<WorkingPage> {
                     onPressed: () {
                       elapsedTime = getElapsedTime();
                       endSession(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ReportPage()),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => ReportPage()),
+                      // );
                     },
                     child: Text("End Workout Session"),
                   ),
