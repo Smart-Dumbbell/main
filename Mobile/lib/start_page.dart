@@ -55,7 +55,7 @@ class _StartPageState extends State<StartPage> {
 
   void _onScanUpdate(DiscoveredDevice d) {
     if (d.name == 'BLE-TEMP' && !_found) {
-      logger.d('Scan done!');
+      // logger.d('Scan done!');
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
@@ -79,7 +79,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _onConnected(String deviceId) {
-    logger.d('On Connect!');
+    // logger.d('On Connect!');
     final characteristic = QualifiedCharacteristic(
       deviceId: deviceId,
       serviceId: Uuid.parse('00000000-5EC4-4083-81CD-A10B8D5CF6EC'),
@@ -89,7 +89,7 @@ class _StartPageState extends State<StartPage> {
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
       setState(() {
         value = const Utf8Decoder().convert(bytes);
-        logger.d(value);
+        // logger.d(value);
         _parseAndSaveRepetitions(value);
       });
     });
