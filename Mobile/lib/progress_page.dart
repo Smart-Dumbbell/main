@@ -179,24 +179,12 @@ class Session {
 class ActivityStorage {
   static const _keyActivities = 'activities';
 
-  Future<void> saveActivity(Session session) async {
+  Future<void> saveActivities(List<Session> sessions) async {
     final prefs = await SharedPreferences.getInstance();
-    final sessionsJson = prefs.getString(_keyActivities);
-    List<Session> sessions = [];
-    if (sessionsJson != null) {
-      final List<dynamic> sessionsList = jsonDecode(sessionsJson);
-      sessions = sessionsList.map((json) => Session.fromJson(json)).toList();
-    }
-
-    // Add the new session
-    sessions.add(session);
-
-    // Keep only the last 10 sessions
     final last10Sessions = sessions.length <= 10 ? sessions : sessions.sublist(sessions.length - 10);
-
-    final updatedSessionsJson = jsonEncode(last10Sessions.map((session) => session.toJson()).toList());
-    await prefs.setString(_keyActivities, updatedSessionsJson);
-  }
+    final sessionsJson = jsonEncode(last10Sessions.map((session) => session.toJson()).toList());
+    await prefs.setString(_keyActivities, sessionsJson);
+}
 
   Future<List<Session>> loadActivities() async {
     final prefs = await SharedPreferences.getInstance();
