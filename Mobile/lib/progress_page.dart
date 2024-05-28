@@ -18,6 +18,12 @@ class ProgressPageState extends State<ProgressPage> {
     loadActivities();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loadActivities();
+  }
+
   Future<void> loadActivities() async {
     final storage = ActivityStorage();
     final loadedSessions = await storage.loadActivities();
@@ -27,43 +33,41 @@ class ProgressPageState extends State<ProgressPage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Recent Activity', style: Theme.of(context).textTheme.headlineMedium),
-        const SizedBox(height: 20),
-        Expanded(
-          child: ListView.builder(
-            itemCount: sessions.length,
-            itemBuilder: (context, index) {
-              // Reverse the index to display the newest activities first
-              final session = sessions.reversed.toList()[index];
-              final highestRepActivity = session.reps.entries.reduce((a, b) => a.value > b.value ? a : b);
-              
-              // Check if all reps are 0 or if all rep values are the same
-              final allZeroReps = session.reps.values.every((value) => value == 0);
-              final sameReps = session.reps.values.toSet().length == 1;
-              
-              // If all reps are 0 or all rep values are the same, set the highest rep activity to "bicep"
-              final activity = (allZeroReps || sameReps) ? 'bicep' : highestRepActivity.key;
-              
-              return ActivityItem(
-                activity: activity,
-                duration: session.duration,
-                reps: highestRepActivity.value.toString(),
-                calories: session.calories.toString(),
-              );
-            },
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Recent Activity', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
+              itemCount: sessions.length,
+              itemBuilder: (context, index) {
+                final session = sessions.reversed.toList()[index];
+                final highestRepActivity = session.reps.entries.reduce((a, b) => a.value > b.value ? a : b);
+
+                final allZeroReps = session.reps.values.every((value) => value == 0);
+                final sameReps = session.reps.values.toSet().length == 1;
+
+                final activity = (allZeroReps || sameReps) ? 'bicep' : highestRepActivity.key;
+
+                return ActivityItem(
+                  activity: activity,
+                  duration: session.duration,
+                  reps: highestRepActivity.value.toString(),
+                  calories: session.calories.toString(),
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
   }
 }
+
 
 class ActivityItem extends StatelessWidget {
   final String activity;
@@ -175,14 +179,23 @@ class Session {
 class ActivityStorage {
   static const _keyActivities = 'activities';
 
-  Future<void> saveActivities(List<Session> sessions) async {
-    final last10Sessions = sessions.length <= 10 
-        ? sessions 
-        : sessions.sublist(sessions.length - 10);
-
+  Future<void> saveActivity(Session session) async {
     final prefs = await SharedPreferences.getInstance();
-    final sessionsJson = jsonEncode(last10Sessions.map((session) => session.toJson()).toList());
-    await prefs.setString(_keyActivities, sessionsJson);
+    final sessionsJson = prefs.getString(_keyActivities);
+    List<Session> sessions = [];
+    if (sessionsJson != null) {
+      final List<dynamic> sessionsList = jsonDecode(sessionsJson);
+      sessions = sessionsList.map((json) => Session.fromJson(json)).toList();
+    }
+
+    // Add the new session
+    sessions.add(session);
+
+    // Keep only the last 10 sessions
+    final last10Sessions = sessions.length <= 10 ? sessions : sessions.sublist(sessions.length - 10);
+
+    final updatedSessionsJson = jsonEncode(last10Sessions.map((session) => session.toJson()).toList());
+    await prefs.setString(_keyActivities, updatedSessionsJson);
   }
 
   Future<List<Session>> loadActivities() async {
