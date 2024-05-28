@@ -44,12 +44,14 @@ class _StartPageState extends State<StartPage> {
   StreamSubscription<List<int>>? _notifySub;
   var _found = false;
   var _isLoading = false;
+  Timer? _connectionTimeoutTimer;
 
   @override
   void dispose() {
     _notifySub?.cancel();
     _connectSub?.cancel();
     _scanSub?.cancel();
+     _connectionTimeoutTimer?.cancel();
     super.dispose();
   }
 
@@ -59,13 +61,14 @@ class _StartPageState extends State<StartPage> {
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
+          _connectionTimeoutTimer?.cancel();
           setState(() {
             isBluetoothConnected.value = true;
             _isLoading = false;
           });
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WorkingPage()),
+            MaterialPageRoute(builder: (context) => WorkingPage(onEndWorkout: _disconnect)),
           );
           _onConnected(d.id);
         } else if (update.connectionState == DeviceConnectionState.disconnected) {
@@ -95,6 +98,16 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
+  void _disconnect() {
+    // logger.d('Disconnecting from BLE device');
+    _connectSub?.cancel();
+    _notifySub?.cancel();
+    setState(() {
+      isBluetoothConnected.value = false;
+      _isLoading = false;
+    });
+  }
+
   void _parseAndSaveRepetitions(String data) {
     final regex = RegExp(r'(\w+) (\d+)');
     final match = regex.firstMatch(data);
@@ -111,6 +124,16 @@ class _StartPageState extends State<StartPage> {
     _found = false;
     setState(() {
       _isLoading = true;
+    });
+    _connectionTimeoutTimer?.cancel();
+    _connectionTimeoutTimer = Timer(Duration(seconds: 10), () {
+      if (!_found) {
+        setState(() {
+          _isLoading = false;
+        });
+        // Replace the current page with a new instance of StartPage
+        setState(() {});
+      }
     });
     _scanSub = _ble.scanForDevices(withServices: []).listen(_onScanUpdate);
   }
@@ -153,3 +176,6 @@ class _StartPageState extends State<StartPage> {
     );
   }
 }
+
+
+

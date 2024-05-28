@@ -10,6 +10,10 @@ import 'package:smart_dumbbell_mobile/progress_page.dart';
 String elapsedTime = "";
 
 class WorkingPage extends StatefulWidget {
+  final VoidCallback onEndWorkout;
+
+  WorkingPage({required this.onEndWorkout});
+
   @override
   _WorkingPageState createState() => _WorkingPageState();
 }
