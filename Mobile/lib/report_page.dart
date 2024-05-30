@@ -87,15 +87,14 @@ class ReportPage extends StatelessWidget {
     String gender = prefs.getString('gender') ?? '';
 
     // Use the retrieved data to calculate calories burned
-    caloriesBurned = _calculateCalories(age, height, weight, gender, elapsedTime);
+    caloriesBurned = _calculateCalories(age, height, weight, gender, elapsedTime, shoulder_repetitions_count, bicep_repetitions_count, tricep_repetitions_count);
     return caloriesBurned;
   }
 
-  double _calculateCalories(int age, double height, double weight, String gender, String elapsedTime) {
+  double _calculateCalories(int age, double height, double weight, String gender, String elapsedTime, double sr, double br, double tr) {
     // Convert elapsed time to hours
     double timeInHours = _convertElapsedTimeToHours(elapsedTime);
 
-    // Calculate BMR
     double bmr;
     if (gender == 'male') {
       bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
@@ -103,11 +102,16 @@ class ReportPage extends StatelessWidget {
       bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
     }
 
-    // Calculate MET value based on elapsed time
+    double metValue = 0;
     double timeInMinutes = timeInHours * 60;
-    double metValue = 1.0 + max(0, timeInMinutes - 2) * 0.15;
 
-    // Calculate calories burned
+    if (br + sr + tr < 3){
+      ///
+    } 
+    else {
+      metValue = 0.75 + (timeInMinutes/ 10.0) + ((br + sr + tr) / 100.0);
+    }  
+    
     double caloriesBurned = bmr * metValue * timeInHours;
     caloriesBurned = caloriesBurned.roundToDouble();
     return caloriesBurned;
