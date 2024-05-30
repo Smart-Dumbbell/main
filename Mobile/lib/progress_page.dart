@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger(printer: PrettyPrinter(),);
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({Key? key}) : super(key: key);

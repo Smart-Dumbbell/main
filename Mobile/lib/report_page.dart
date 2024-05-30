@@ -33,7 +33,7 @@ class ReportPage extends StatelessWidget {
 
             // Use FutureBuilder to asynchronously call calculateCaloriesBurned and display the result
             FutureBuilder<double>(
-              future: _calculateCaloriesBurned(context),
+              future: calculateCaloriesBurned(context),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // Display a loading indicator while the calculation is in progress
@@ -77,7 +77,7 @@ class ReportPage extends StatelessWidget {
   }
 
   // Function to asynchronously calculate calories burned using profile data
-  Future<double> _calculateCaloriesBurned(BuildContext context) async {
+  Future<double> calculateCaloriesBurned(BuildContext context) async {
     // Retrieve profile data from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String name = prefs.getString('name') ?? '';

@@ -6,6 +6,10 @@ import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:smart_dumbbell_mobile/report_page.dart';
 import 'package:smart_dumbbell_mobile/global.dart';
 import 'package:smart_dumbbell_mobile/progress_page.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+var logger = Logger(printer: PrettyPrinter(),);
 
 String elapsedTime = "";
 
@@ -50,7 +54,7 @@ class _WorkingPageState extends State<WorkingPage> {
     return "$minutes:$seconds:$milliseconds";
   }
 
-   void endSession(BuildContext context) async {
+  Future<void> endSession(BuildContext context) async {
     final reps = {
       'shoulders': shoulder_repetitions_count.toDouble(), 
       'bicep': bicep_repetitions_count.toDouble(),
@@ -58,7 +62,7 @@ class _WorkingPageState extends State<WorkingPage> {
     };
 
     final duration = elapsedTime;
-    final calories = caloriesBurned;
+    final calories = await calculateCaloriesBurned(context);
 
     addSession(context, reps, duration, calories);
     Navigator.push(
@@ -162,12 +166,6 @@ class _WorkingPageState extends State<WorkingPage> {
                     },
                   ),
 
-                  // SizedBox(height: 10),
-                  // // Display count below the progress bar
-                  // Text(
-                  //   'Count: $repetitions',
-                  //   style: TextStyle(fontSize: 18),
-                  // ),
                   CupertinoButton(
                     onPressed: () {
                       setState(() {
@@ -217,13 +215,9 @@ class _WorkingPageState extends State<WorkingPage> {
                   ),
                   SizedBox(height: 15),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       elapsedTime = getElapsedTime();
-                      endSession(context);
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => ReportPage()),
-                      // );
+                      await endSession(context);
                     },
                     child: Text("End Workout Session"),
                   ),
@@ -241,7 +235,62 @@ void addSession(BuildContext context, Map<String, double> reps, String duration,
   final storage = ActivityStorage();
   List<Session> sessions = await storage.loadActivities();
   sessions.add(Session(reps: reps, duration: duration, calories: calories));
+  logger.d(reps);
+  logger.d(duration);
+  logger.d(calories);
   await storage.saveActivities(sessions);
   final progressPageState = context.findAncestorStateOfType<ProgressPageState>();
   progressPageState?.loadActivities();
+}
+
+Future<double> calculateCaloriesBurned(BuildContext context) async {
+  // Retrieve profile data from SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String name = prefs.getString('name') ?? '';
+  int age = prefs.getInt('age') ?? 0;
+  double height = prefs.getDouble('height') ?? 0.0;
+  double weight = prefs.getDouble('weight') ?? 0.0;
+  String gender = prefs.getString('gender') ?? '';
+
+  // Use the retrieved data to calculate calories burned
+  double caloriesBurned = _calculateCalories(age, height, weight, gender, elapsedTime, shoulder_repetitions_count, bicep_repetitions_count, tricep_repetitions_count);
+  return caloriesBurned;
+}
+
+double _calculateCalories(int age, double height, double weight, String gender, String elapsedTime, double sr, double br, double tr) {
+  // Convert elapsed time to hours
+  double timeInHours = _convertElapsedTimeToHours(elapsedTime);
+
+  double bmr;
+  if (gender == 'male') {
+    bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+  } else {
+    bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+  }
+
+  double metValue = 0;
+  double timeInMinutes = timeInHours * 60;
+
+  if (br + sr + tr < 3) {
+    metValue = 0; // Handle low activity levels appropriately
+  } else {
+    metValue = 0.75 + (timeInMinutes / 10.0) + ((br + sr + tr) / 100.0);
+  }  
+
+  double caloriesBurned = bmr * metValue * timeInHours;
+  return caloriesBurned.roundToDouble();
+}
+
+double _convertElapsedTimeToHours(String elapsedTime) {
+  List<String> parts = elapsedTime.split(':');
+  if (parts.length != 3) {
+    throw ArgumentError('time format wrong');
+  }
+
+  int minutes = int.parse(parts[0]);
+  int seconds = int.parse(parts[1]);
+  int milliseconds = int.parse(parts[2]);
+
+  double totalHours = minutes / 60 + seconds / 3600 + milliseconds / 3600000;
+  return totalHours;
 }
