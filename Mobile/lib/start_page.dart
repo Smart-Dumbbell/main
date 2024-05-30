@@ -7,9 +7,6 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
 import 'package:smart_dumbbell_mobile/global.dart';
 
-
-
-
 void updateRepetitions(double newReps, String type) {
   switch (type) {
     case 'Bicep':
@@ -51,13 +48,12 @@ class _StartPageState extends State<StartPage> {
     _notifySub?.cancel();
     _connectSub?.cancel();
     _scanSub?.cancel();
-     _connectionTimeoutTimer?.cancel();
+    _connectionTimeoutTimer?.cancel();
     super.dispose();
   }
 
   void _onScanUpdate(DiscoveredDevice d) {
     if (d.name == 'BLE-TEMP' && !_found) {
-      // logger.d('Scan done!');
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
@@ -82,7 +78,6 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _onConnected(String deviceId) {
-    // logger.d('On Connect!');
     final characteristic = QualifiedCharacteristic(
       deviceId: deviceId,
       serviceId: Uuid.parse('00000000-5EC4-4083-81CD-A10B8D5CF6EC'),
@@ -92,14 +87,12 @@ class _StartPageState extends State<StartPage> {
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
       setState(() {
         value = const Utf8Decoder().convert(bytes);
-        // logger.d(value);
         _parseAndSaveRepetitions(value);
       });
     });
   }
 
   void _disconnect() {
-    // logger.d('Disconnecting from BLE device');
     _connectSub?.cancel();
     _notifySub?.cancel();
     setState(() {
@@ -131,8 +124,9 @@ class _StartPageState extends State<StartPage> {
         setState(() {
           _isLoading = false;
         });
-        // Replace the current page with a new instance of StartPage
-        setState(() {});
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No device found')),
+        );
       }
     });
     _scanSub = _ble.scanForDevices(withServices: []).listen(_onScanUpdate);
@@ -152,10 +146,6 @@ class _StartPageState extends State<StartPage> {
               onPressed: () {
                 resetRepetitions();
                 _startBluetoothScan();
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => WorkingPage()),
-                // );
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
@@ -176,6 +166,3 @@ class _StartPageState extends State<StartPage> {
     );
   }
 }
-
-
-
