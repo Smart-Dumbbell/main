@@ -5,6 +5,8 @@ import 'package:smart_dumbbell_mobile/start_page.dart';
 import 'package:smart_dumbbell_mobile/me_page.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:smart_dumbbell_mobile/progress_page.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 
 ValueNotifier<bool> isBluetoothConnected = ValueNotifier(false);
@@ -127,4 +129,16 @@ class _HomePageState extends State<HomePage> {
     final progressPageState = context.findAncestorStateOfType<ProgressPageState>();
     progressPageState?.loadActivities();
   }
+
+  Future<void> requestLocationPermission() async {
+    final status = await Permission.location.request();
+    if (status.isGranted) {
+      print('Location permission granted');
+    } else if (status.isDenied) {
+      print('Location permission denied');
+    } else if (status.isPermanentlyDenied) {
+      openAppSettings();
+    }
+  }
+
 }
