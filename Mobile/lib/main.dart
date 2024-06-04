@@ -76,6 +76,12 @@ class _HomePageState extends State<HomePage> {
     GoalPage(onGoalSelected: (int selectedIndex) {}),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    requestLocationPermission();
+  }
+
   void _onItemTapped(int index) {
     if (index >= 0 && index < _widgetOptions.length) {
       setState(() {
@@ -130,15 +136,21 @@ class _HomePageState extends State<HomePage> {
     progressPageState?.loadActivities();
   }
 
-  Future<void> requestLocationPermission() async {
-    final status = await Permission.location.request();
-    if (status.isGranted) {
+    Future<void> requestLocationPermission() async {
+     final status1 = await Permission.bluetoothScan.request();
+     final status2 = await Permission.bluetoothAdvertise.request();
+     final status3 = await Permission.bluetoothConnect.request();
+
+    if (status1.isGranted & status2.isGranted & status3.isGranted){
       print('Location permission granted');
-    } else if (status.isDenied) {
+    }
+    else if (status1.isDenied & status2.isDenied & status3.isDenied){
       print('Location permission denied');
-    } else if (status.isPermanentlyDenied) {
+    }
+    else if (status1.isPermanentlyDenied & status2.isPermanentlyDenied & status3.isPermanentlyDenied){
       openAppSettings();
     }
+
   }
 
 }

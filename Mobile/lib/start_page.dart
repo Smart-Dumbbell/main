@@ -7,6 +7,8 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logger/logger.dart' as myLogger;
 import 'package:smart_dumbbell_mobile/global.dart';
 
+
+
 void updateRepetitions(double newReps, String type) {
   switch (type) {
     case 'Bicep':
@@ -101,6 +103,8 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
+
+
   void _parseAndSaveRepetitions(String data) {
     final regex = RegExp(r'(\w+) (\d+)');
     final match = regex.firstMatch(data);
@@ -144,12 +148,13 @@ class _StartPageState extends State<StartPage> {
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                // resetRepetitions();
-                // _startBluetoothScan();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WorkingPage(onEndWorkout: _disconnect)),
-                );
+                //requestLocationPermission();
+                resetRepetitions();
+                _startBluetoothScan();
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => WorkingPage(onEndWorkout: _disconnect)),
+                // );
               },
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
