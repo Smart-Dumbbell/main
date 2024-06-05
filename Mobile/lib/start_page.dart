@@ -4,8 +4,10 @@ import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:logger/logger.dart' as myLogger;
+import 'package:logger/logger.dart';
 import 'package:smart_dumbbell_mobile/global.dart';
+
+// var logger = Logger(printer: PrettyPrinter(),);
 
 void updateRepetitions(double newReps, String type) {
   switch (type) {
@@ -21,6 +23,10 @@ void updateRepetitions(double newReps, String type) {
     default:
       break;
   }
+}
+
+void updatebattery (double newval){
+    battery = newval;
 }
 
 void resetRepetitions() {
@@ -53,7 +59,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _onScanUpdate(DiscoveredDevice d) {
-    if (d.name == 'BLE-TEMP' && !_found) {
+    if (d.name == 'BLE-TEMP-BAT' && !_found) {
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
@@ -77,6 +83,7 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
+
   void _onConnected(String deviceId) {
     final characteristic = QualifiedCharacteristic(
       deviceId: deviceId,
@@ -87,6 +94,7 @@ class _StartPageState extends State<StartPage> {
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
       setState(() {
         value = const Utf8Decoder().convert(bytes);
+        logger.d(value);
         _parseAndSaveRepetitions(value);
       });
     });
@@ -102,13 +110,15 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _parseAndSaveRepetitions(String data) {
-    final regex = RegExp(r'(\w+) (\d+)');
+    final regex = RegExp(r'(\w+) (\d+) (\d)');
     final match = regex.firstMatch(data);
 
     if (match != null) {
       final type = match.group(1)!;
       final repetitions = double.parse(match.group(2)!);
+      final battery_status = double.parse(match.group(3)!);
       updateRepetitions(repetitions, type);
+      updatebattery(battery_status);
     }
   }
 
