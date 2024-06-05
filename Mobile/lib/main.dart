@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
      final status3 = await Permission.bluetoothConnect.request();
 
     if (status1.isGranted & status2.isGranted & status3.isGranted){
-      isLocationGranted = true;
+      // isLocationGranted = true;
       print('Location permission granted');
     }
     else if (status1.isDenied & status2.isDenied & status3.isDenied){

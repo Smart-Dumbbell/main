@@ -67,14 +67,14 @@ class _StartPageState extends State<StartPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) {
-              if (isLocationGranted) {
+              // if (isLocationGranted) {
                 return WorkingPage(onEndWorkout: _disconnect);
-              } else {
-                return Scaffold(
-                  appBar: AppBar(title: Text('Permission Required')),
-                  body: Center(child: Text('Please grant location permission to start the workout.')),
-                );
-              }
+              // } else {
+              //   return Scaffold(
+              //     appBar: AppBar(title: Text('Permission Required')),
+              //     body: Center(child: Text('Please grant location permission to start the workout.')),
+              //   );
+              // }
             }),
           );
           _onConnected(d.id);
