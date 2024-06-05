@@ -66,7 +66,16 @@ class _StartPageState extends State<StartPage> {
           });
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WorkingPage(onEndWorkout: _disconnect)),
+            MaterialPageRoute(builder: (context) {
+              if (isLocationGranted) {
+                return WorkingPage(onEndWorkout: _disconnect);
+              } else {
+                return Scaffold(
+                  appBar: AppBar(title: Text('Permission Required')),
+                  body: Center(child: Text('Please grant location permission to start the workout.')),
+                );
+              }
+            }),
           );
           _onConnected(d.id);
         } else if (update.connectionState == DeviceConnectionState.disconnected) {
@@ -148,7 +157,6 @@ class _StartPageState extends State<StartPage> {
             alignment: Alignment.center,
             child: ElevatedButton(
               onPressed: () {
-                //requestLocationPermission();
                 resetRepetitions();
                 _startBluetoothScan();
                 // Navigator.push(

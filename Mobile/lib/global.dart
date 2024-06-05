@@ -7,4 +7,4 @@ double tricep_repetitions_count = 0;
 var value = '';
 double caloriesBurned = 0;
 
-
+bool isLocationGranted = false; 

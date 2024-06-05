@@ -6,6 +6,7 @@ import 'package:smart_dumbbell_mobile/me_page.dart';
 import 'package:smart_dumbbell_mobile/goal_page.dart';
 import 'package:smart_dumbbell_mobile/progress_page.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:smart_dumbbell_mobile/global.dart';
 
 
 
