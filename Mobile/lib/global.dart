@@ -8,4 +8,4 @@ double battery = 200;
 var value = '';
 double caloriesBurned = 0;
 
-
+// bool isLocationGranted = false; 
