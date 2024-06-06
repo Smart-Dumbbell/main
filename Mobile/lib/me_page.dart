@@ -22,7 +22,7 @@ class _ProfilePageState extends State<MePage> {
   Future<void> _loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _nameController.text = prefs.getString('name') ?? '';
+      _nameController.text = prefs.getString('name') ?? ''; 
       _ageController.text = prefs.getInt('age')?.toString() ?? '';
       _heightController.text = prefs.getDouble('height')?.toString() ?? '';
       _weightController.text = prefs.getDouble('weight')?.toString() ?? '';
@@ -36,42 +36,44 @@ class _ProfilePageState extends State<MePage> {
       appBar: AppBar(
         title: Text('Profile'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-            ),
-            TextFormField(
-              controller: gender,
-              decoration: InputDecoration(labelText: 'Gender'),
-            ),
-            TextFormField(
-              controller: _ageController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Age'),
-            ),
-            TextFormField(
-              controller: _heightController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Height'),
-            ),
-            TextFormField(
-              controller: _weightController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Weight'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _saveData();
-              },
-              child: Text('Save'),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+              TextFormField(
+                controller: gender,
+                decoration: InputDecoration(labelText: 'Gender'),
+              ),
+              TextFormField(
+                controller: _ageController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Age'),
+              ),
+              TextFormField(
+                controller: _heightController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Height'),
+              ),
+              TextFormField(
+                controller: _weightController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Weight'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  _saveData();
+                },
+                child: Text('Save'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -99,17 +101,3 @@ class _ProfilePageState extends State<MePage> {
     super.dispose();
   }
 }
-
-// class ProgressPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Progress Page'),
-//       ),
-//       body: Center(
-//         child: Text('This is the Progress Page'),
-//       ),
-//     );
-//   }
-// }

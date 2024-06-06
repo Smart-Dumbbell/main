@@ -59,7 +59,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _onScanUpdate(DiscoveredDevice d) {
-    if (d.name == 'BLE-TEMP-BAT' && !_found) {
+    if (d.name == 'BLE-TEMP' && !_found) {
       _found = true;
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
