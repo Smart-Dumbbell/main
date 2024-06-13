@@ -4,10 +4,10 @@ import 'package:smart_dumbbell_mobile/working_page.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:logger/logger.dart';
+import 'package:logger/logger.dart' as MyLogger;
 import 'package:smart_dumbbell_mobile/global.dart';
 
-// var logger = Logger(printer: PrettyPrinter(),);
+var logger = MyLogger.Logger();
 
 void updateRepetitions(double newReps, String type) {
   switch (type) {
@@ -121,15 +121,15 @@ class _StartPageState extends State<StartPage> {
 
 
   void _parseAndSaveRepetitions(String data) {
-    final regex = RegExp(r'(\w+) (\d+) (\d)');
+    final regex = RegExp(r'(\w+) (\d+)');
     final match = regex.firstMatch(data);
 
     if (match != null) {
       final type = match.group(1)!;
       final repetitions = double.parse(match.group(2)!);
-      final battery_status = double.parse(match.group(3)!);
+      // final battery_status = double.parse(match.group(3)!);
       updateRepetitions(repetitions, type);
-      updatebattery(battery_status);
+      // updatebattery(battery_status);
     }
   }
 
